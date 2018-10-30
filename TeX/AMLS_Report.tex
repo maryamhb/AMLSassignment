@@ -1,0 +1,95 @@
+% ============================= Info ============================= %
+
+% Applied Machine Learning Systems ELEC0132 Assignment
+% Due 11:59pm, 07 Jan 2019
+
+% 6 double-column single-spaced pages 
+% Plus up to 4 pages of supplementary material 
+% (methodology clarification, additional results, other tests, etc.)
+
+% Include hidden link to code in public repo (Dropbox, Drive, etc.)
+
+\iffalse
+Assignment tasks:
+	- Detection and removal of noisy images
+	- Training, validation and testing subsets division
+	- Train ML models to perform
+		Binary tasks
+			1. Emotion recognition (smile/!smile)
+			2. Age identification (young/old)
+			3. Glasses detection (with/without)
+			4. Human detection (real/avatar)
+		Multiclass tasks
+			5. Hair colour recognition (ginger, blond, brown, grey, black, bald)
+\fi
+
+% =========================== Packages =========================== %
+\documentclass[conference]{IEEEtran}
+\usepackage{amsmath, graphicx, multicol, cite}
+\usepackage{color}
+\usepackage{listings}% code
+%\usepackage{refcheck}
+\lstset{escapeinside={<@}{@>}}
+
+% ============================= Title ============================= %
+\begin{document}
+
+\title{Applied Machine Learning\\
+ Systems ELEC0132 Assignment}
+\author{Maryam Habibollahi\\ \textit{Department of Electronic and Electrical Engineering}\\ \textit{University College London}\\ zceemha@ucl.ac.uk}
+\date{November 2018}
+\maketitle
+
+
+% ============================ Abstract =========================== %
+\begin{abstract}
+Brief overview of the methodology/results presented.\\
+\end{abstract}
+
+\begin{IEEEkeywords}
+Machine learning, ...
+\end{IEEEkeywords}
+% ========================== Introduction ========================== %
+\section{Introduction} \label{s-intro}
+
+The problem statement.\\
+
+Dataset description summarising data (content, size, format, etc.) and describing any \textit{data preprocessing} applied.\\
+
+% ======================= Proposed algorithms ====================== %
+\section{Proposed algorithms} \label{s-algorithms}
+
+Algorithmic approach used to solve the problem.\\
+
+Explain rationale behind choices, i.e. detail your \textit{reasons for selecting a particular model}.\\
+
+% ========================= Implementation ======================== %
+\section{Implementation} \label{s-implement}
+
+Provide name and use of \textit{external libraries} and explain how \textit{model parameters} were selected.\\
+
+Thorough discussion on the training convergence and stopping criterion (use learning curves graphs).\\
+
+% ======================= Experimental results ====================== %
+\section{Experimental result} \label{s-exp-res}
+
+Describe and discuss results, compare to other approaches in literature or variations of ML solutions.\\
+
+Include \textit{accuracy prediction scores on a separate test dataset, provided by the module organisers, but not used during training and validation}.\\
+
+% ========================== Conclusion ========================== %
+\section{Conclusion} \label{s-concl}
+
+Summaries all findings and suggest direction for future improvement.\\
+
+% ========================= Related work ========================== %
+\section{Related Work} \label{s-rel-work}
+
+Summarise latest reserach on the topic, discussing merits/disadvantages of diff approaches.\\
+
+% ========================== References ========================== %
+
+\bibliographystyle{IEEEtran}
+\bibliography{/Users/MaryamH/Documents/BibTex/library}
+
+\end{document}
