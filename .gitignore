@@ -1,6 +1,10 @@
 *.DS_Store
 *.Rhistory
 
+## Python virtual environment
+*.idea
+/Python/code/venv
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
