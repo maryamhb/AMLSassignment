@@ -46,7 +46,12 @@ def label_features():
 
     landmark_features = np.array(all_features)
     feature_labels = (np.array(all_labels))
-    print(counter, "noisy images:\n", noise)
+
+    # store noisy image labels
+    f = open("noisy_images", "w+")
+    f.write("%d noisy images were detected:\r\n\n" % counter)
+    [f.write("%s, " % img_num) for img_num in noise]
+    f.close()
 
     return landmark_features, feature_labels
 
