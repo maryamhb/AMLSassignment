@@ -8,8 +8,8 @@ import time
 start = time.time()
 
 # Data directory
-img_dir = os.path.join('..','dataset')
-labels_dir = os.path.join('..','attribute_list.csv')
+img_dir = os.path.join('..', 'dataset')
+labels_dir = os.path.join('..', 'attribute_list.csv')
 
 # Face detector + landmark predictor
 detector = dlib.get_frontal_face_detector()
@@ -47,7 +47,7 @@ def label_features():
             else:
                 noise.append(img_name)
                 counter += 1
-                #if counter > 10: break  # limit data to speed up tests
+                #if counter > 100: break  # limit data to speed up tests
 
     landmark_features = np.array(all_features)
     feature_labels = (np.array(all_labels))
@@ -61,7 +61,7 @@ def label_features():
 
     f = open("noisy_images", "w+")
     f.write("%d noisy images were detected in %0.2f min:\r\n"
-            "%0.2f accuracy with grayscale\r\n\n"
+            "Accuracy = %0.2f with grayscale and gamma correction\r\n\n"
             % (counter, (end-start)/60, accuracy))
     [f.write("%s, " % img_num) for img_num in noise]
     f.write("\r\n\n\n%d false negatives were found (%0.2f FNR):\r\n\n"
@@ -92,8 +92,16 @@ def get_landmarks(img):
     # resize image + convert to grayscale
     img = img.astype('uint8')
 
-    #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray = img#gray.astype('uint8')
+    gamma = 3.5
+    gamma_inv = 1.0 / gamma
+    table = np.array([((i / 255.0) ** gamma_inv) * 255
+                      for i in np.arange(0, 256)]).astype("uint8")
+
+    # gamma correction using lookup table
+    gam = cv2.LUT(img, table)
+
+    gray = cv2.cvtColor(gam, cv2.COLOR_BGR2GRAY)
+    gray = gray.astype('uint8')
 
     # localise faces in grayscale
     rects = detector(gray, 1)
