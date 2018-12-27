@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import pandas as pd
 from keras.preprocessing import image
 import cv2
 import dlib
@@ -27,13 +28,15 @@ def label_features():
     labels_file = open(labels_dir, 'r')
     lines = labels_file.readlines()
     # Store all labels in a dictionary
-    img_labels = {line.split(',')[0] : [int(line.split(',')[col]) for col in range(1,5)] for line in lines[2:]}
+    img_labels = {line.split(',')[0] : [int(line.split(',')[col]) for col in range(1, 6)] for line in lines[2:]}
 
     if os.path.isdir(img_dir):
         all_features = []
         all_labels = []
         noise = []
-        counter = 0
+        data_count = 0
+        noise_count = 0
+
         for img_path in img_paths:
             img_name = img_path.split('.')[2].split('/')[-1]
 
@@ -44,10 +47,12 @@ def label_features():
             if img_features is not None:
                 all_features.append(img_features)
                 all_labels.append(img_labels[img_name])
+                data_count += 1
+
             else:
                 noise.append(img_name)
-                counter += 1
-                #if counter > 100: break  # limit data to speed up tests
+                noise_count += 1
+                # if noise_count > 20: break  # limit data to speed up test
 
     landmark_features = np.array(all_features)
     feature_labels = (np.array(all_labels))
@@ -57,15 +62,16 @@ def label_features():
     accuracy = 1-len(false_neg)/len(img_paths)
     end = time.time()
 
-    # store noisy image labels
+    print(data_count, "data points and", noise_count, "noisy images")
 
-    f = open("noisy_images", "w+")
+    # store noisy image labels
+    f = open(os.path.join('out','noise'), "w+")
     f.write("%d noisy images were detected in %0.2f min:\r\n"
             "Accuracy = %0.2f with grayscale and gamma correction\r\n\n"
-            % (counter, (end-start)/60, accuracy))
+            % (noise_count, (end-start)/60, accuracy))
     [f.write("%s, " % img_num) for img_num in noise]
     f.write("\r\n\n\n%d false negatives were found (%0.2f FNR):\r\n\n"
-            % (len(false_neg), len(false_neg)/counter))
+            % (len(false_neg), len(false_neg)/noise_count))
     [f.write("%s, " % FN) for FN in false_neg]
     f.close()
 
@@ -92,7 +98,7 @@ def get_landmarks(img):
     # resize image + convert to grayscale
     img = img.astype('uint8')
 
-    gamma = 3.5
+    gamma = 3.0
     gamma_inv = 1.0 / gamma
     table = np.array([((i / 255.0) ** gamma_inv) * 255
                       for i in np.arange(0, 256)]).astype("uint8")
@@ -153,31 +159,23 @@ def shape2np(shape, dtype="int"):
     return xy
 
 
-'''
+# Store features and labels
 
-Image manipulation libraries:
- - PIL (Pillow)
- - OpenCV (cv2)
- - scikit-image (skimage)
- 
-Pre-processing techniques:
- - Subtract mean intensity & divide by sd
- - Gamma correction (power-law equalisation)
- - Colour space transformation (RGB-LAB)
- 
-Facial landmark detection:
- - Holistic methods
- - Constrained Local Model (CLM) methods
- - Regression-based models 
- 
-Feature extraction methods:
- - Haar-like features (Viola & Jones)
- - Histogram of Oriented Gradients (HOG)
- - Scale-Invariant Feature Transform (SIFT)
- - Speeded Up Robust Feature (SURF)
- 
-'''
+def update_features():
+    features, labels = label_features()
+
+    # reshape features to 2D matrix
+    m = features.shape
+    features = np.reshape(features, (m[0], m[1] * 2)).astype(float)
+
+    # convert to dataframe + store in csv
+    df = pd.DataFrame(features)
+    df.to_csv(os.path.join('out', 'features.csv'))
+
+    dl = pd.DataFrame(labels)
+    dl.to_csv(os.path.join('out', 'labels.csv'))
+
+    return features, labels
 
 
-# Test on data
-features, labels = label_features()
+# update_features()
