@@ -3,6 +3,9 @@ import numpy as np
 from keras.preprocessing import image
 import cv2
 import dlib
+import time
+
+start = time.time()
 
 # Data directory
 img_dir = os.path.join('..','dataset')
@@ -23,7 +26,8 @@ def label_features():
 
     labels_file = open(labels_dir, 'r')
     lines = labels_file.readlines()
-    human_labels = {line.split(',')[0] : int(line.split(',')[5]) for line in lines[2:]}
+    # Store all labels in a dictionary
+    img_labels = {line.split(',')[0] : [int(line.split(',')[col]) for col in range(1,5)] for line in lines[2:]}
 
     if os.path.isdir(img_dir):
         all_features = []
@@ -36,24 +40,48 @@ def label_features():
             img = image.img_to_array(image.load_img(img_path,
                                                     target_size=None,
                                                     interpolation='bicubic'))
-            features, _ = get_landmarks(img)
-            if features is not None:
-                all_features.append(features)
-                all_labels.append(human_labels[img_name])
+            img_features, _ = get_landmarks(img)
+            if img_features is not None:
+                all_features.append(img_features)
+                all_labels.append(img_labels[img_name])
             else:
                 noise.append(img_name)
                 counter += 1
+                #if counter > 10: break  # limit data to speed up tests
 
     landmark_features = np.array(all_features)
     feature_labels = (np.array(all_labels))
 
+    # determine accuracy of noisy images
+    false_neg = noise_accuracy(noise, img_labels)
+    accuracy = 1-len(false_neg)/5000
+    end = time.time()
+
     # store noisy image labels
+
     f = open("noisy_images", "w+")
-    f.write("%d noisy images were detected:\r\n\n" % counter)
+    f.write("%d noisy images were detected in %0.2f min:\r\n\n"
+            % (counter, (end-start)/60))
     [f.write("%s, " % img_num) for img_num in noise]
+    f.write("\r\n\n\n%d false negatives were found (%0.2f accuracy):\r\n\n"
+            % (len(false_neg), accuracy))
+    [f.write("%s, " % FN) for FN in false_neg]
     f.close()
 
     return landmark_features, feature_labels
+
+
+# Test face detection accuracy
+
+def noise_accuracy(indx, noise_labels):
+    f_neg = []
+    for i in range(len(indx)):
+        checker = np.sum(noise_labels[indx[i]])
+        # iff all 4 labels are -1, img is noise
+        if checker > -4:
+            f_neg.append(indx[i])
+
+    return f_neg
 
 
 # Localise face + predict shape using dlib and OpenCV
@@ -143,4 +171,4 @@ Feature extraction methods:
 
 
 # Test on data
-label_features()
+features, labels = label_features()
