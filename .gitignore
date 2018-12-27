@@ -4,6 +4,7 @@
 ## Python virtual environment
 *.idea
 /Python/code/venv
+/Python/code/__pycache__/
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
