@@ -54,17 +54,18 @@ def label_features():
 
     # determine accuracy of noisy images
     false_neg = noise_accuracy(noise, img_labels)
-    accuracy = 1-len(false_neg)/5000
+    accuracy = 1-len(false_neg)/len(img_paths)
     end = time.time()
 
     # store noisy image labels
 
     f = open("noisy_images", "w+")
-    f.write("%d noisy images were detected in %0.2f min:\r\n\n"
-            % (counter, (end-start)/60))
+    f.write("%d noisy images were detected in %0.2f min:\r\n"
+            "%0.2f accuracy with grayscale\r\n\n"
+            % (counter, (end-start)/60, accuracy))
     [f.write("%s, " % img_num) for img_num in noise]
-    f.write("\r\n\n\n%d false negatives were found (%0.2f accuracy):\r\n\n"
-            % (len(false_neg), accuracy))
+    f.write("\r\n\n\n%d false negatives were found (%0.2f FNR):\r\n\n"
+            % (len(false_neg), len(false_neg)/counter))
     [f.write("%s, " % FN) for FN in false_neg]
     f.close()
 
