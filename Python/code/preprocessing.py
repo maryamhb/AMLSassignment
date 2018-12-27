@@ -18,6 +18,9 @@ predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 def label_features():
     # load image + label data
     img_paths = [os.path.join(img_dir, l) for l in os.listdir(img_dir)]
+    # order items
+    img_paths = sorted(sorted(img_paths), key=len, reverse=False)
+
     labels_file = open(labels_dir, 'r')
     lines = labels_file.readlines()
     human_labels = {line.split(',')[0] : int(line.split(',')[5]) for line in lines[2:]}
@@ -38,12 +41,12 @@ def label_features():
                 all_features.append(features)
                 all_labels.append(human_labels[img_name])
             else:
-                noise.append(img_path)
+                noise.append(img_name)
                 counter += 1
 
     landmark_features = np.array(all_features)
     feature_labels = (np.array(all_labels))
-    print(counter, " noisy images:\n", noise)
+    print(counter, "noisy images:\n", noise)
 
     return landmark_features, feature_labels
 
