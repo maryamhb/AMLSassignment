@@ -92,8 +92,8 @@ def get_landmarks(img):
     # resize image + convert to grayscale
     img = img.astype('uint8')
 
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray = gray.astype('uint8')
+    #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = img#gray.astype('uint8')
 
     # localise faces in grayscale
     rects = detector(gray, 1)
