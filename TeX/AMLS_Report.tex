@@ -49,21 +49,46 @@ Assignment tasks:
 % ========================== Introduction ========================== %
 \section{Introduction} \label{s-intro}
 
-The problem statement.\\
+%The problem statement.\\
 
-Dataset description summarising data (content, size, format, etc.) and describing any \textit{data preprocessing} applied.\\
+% Why face recognition, why classification? (applications, need, PROBLEM!)
+This assignment aims to train machine learning models on a large dataset of images to complete the tasks of binary and multiclass classification.
+
+%Dataset description summarising data (content, size, format, etc.) and describing any \textit{data preprocessing} applied.\\
+
+The tasks are performed on a dataset of 5000 Portable Network Graphic (PNG) image files consisting of pre-processed subsets from the \textbf{CelebFaces Attributes Dataset (CelebA)}, a celebrity image dataset  % CITE!
+%(S. Yang, P. Luo, C. C. Loy, and X. Tang, "From facial parts responses to face detection: A Deep Learning Approach", in IEEE International Conference on Computer Vision (ICCV), 2015
+, and the \textbf{Cartoon Set}, an image dataset of random cartoons/avatarts % CITE!
+%(source: https://google.github.io/cartoonset/)
+, as well as a number of noisy images (mainly of natural backgrounds) to be detected and removed from the training data.
+All images are labelled with hair colour, and whether the subject is wearing glasses, is smilining, or is classified as human.
+
+In order to train a suitable modle for the required classification tasks, facial landmarks were extracted via various detection methods using Python's Dlib and Open Source Computer Vision (OpenCV) libraries; namely the Histogram of Gradients (HoG) Face Detector accessible via Dlib, Haar Cascade Face Detector accessible via OpenCV, and the Deep Learning-based Face Detector, which can be implementable via both libraries. A comparative analysis of the performance of each method with respect to the labaled noisy images (where all labels are defined as -1) facilitated the selection of the most appropriate feature extraction method for the given dataset.
+
+Prior to each feature extraction method, a number of preprocessing techniques were carried out on the images to improve both the performance and the processing power during the later stages of the extraction, training and classification procedures. Some of the techniques that are often applied for this purpose include colour space transformation, capable of significantly reducing processing complexity, gamma correction or power-law equalisation, a non-linear function used to normalise illumination by raising the input value to the power $\gamma$, mean normalisation, etc.
+% ^ Elaborate + Equations
 
 % ======================= Proposed algorithms ====================== %
 \section{Proposed algorithms} \label{s-algorithms}
 
 Algorithmic approach used to solve the problem.\\
 
+% feature extraction methods 
+
+% training models: svm, nn, etc.
+
 Explain rationale behind choices, i.e. detail your \textit{reasons for selecting a particular model}.\\
+
+% expected performance, overfitting, etc.
 
 % ========================= Implementation ======================== %
 \section{Implementation} \label{s-implement}
 
 Provide name and use of \textit{external libraries} and explain how \textit{model parameters} were selected.\\
+
+% scikit-learn -> svm, neural networks, etc.
+
+% cross-validation methods on various parameter values
 
 Thorough discussion on the training convergence and stopping criterion (use learning curves graphs).\\
 
