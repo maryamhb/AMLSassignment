@@ -12,10 +12,13 @@ test = True
 # Data directory
 img_dir = os.path.join('..', 'dataset')
 labels_dir = os.path.join('..', 'attribute_list.csv')
+pred_dir = os.path.join('models', 'shape_predictor_68_face_landmarks.dat')
+haar_dir = os.path.join('models', 'haarcascade_frontalface_default.xml')
+
 
 # Face detector + landmark predictor
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor(pred_dir)
 
 
 # Run get_landmarks on all images
@@ -74,7 +77,9 @@ def label_features(detector):
 # Return features + processed img
 def get_landmarks(detector, img):
     landmark, img_out = HoG_landmarks(img)
-    # landmark, img_out = Harr_cascade(img)
+
+    # landmark, img_out = Haar_cascade(img)
+    # ^ predictor incompatible with Haar cascade
 
     return landmark, img_out
 
@@ -118,16 +123,16 @@ def HoG_landmarks(img):
     return face_out, img
 
 
-# Collect face area using Harr-cascade
+# Collect face area using Haar-cascade
 # detection in OpenCV as rect, return
 # bounding box of largest face area
-def Harr_cascade(img):
+def Haar_cascade(img):
     # resize image + convert to grayscale
     img = img.astype('uint8')
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # localise faces in grayscale
-    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier(haar_dir)
     rects = face_cascade.detectMultiScale(gray)
     n = len(rects)
 
