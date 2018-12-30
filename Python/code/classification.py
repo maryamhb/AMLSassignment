@@ -1,16 +1,17 @@
 import os
+import utils as ut
 import numpy as np
 import pandas as pd
-import landmarks as lm
 from sklearn import svm, neural_network as nn, preprocessing as pp
 from sklearn.metrics import classification_report, confusion_matrix
 
+
 # Labels: index (0), hair colour (1), glasses (2), smiling (3), young (4), human (5)
 
-def get_data():
-    # lm.update_features()
-    x_df = pd.read_csv(os.path.join('out', 'features.csv'))
-    y_df = pd.read_csv(os.path.join('out', 'labels.csv'))
+def get_data(detector):
+    ut.update_features(detector)
+    x_df = pd.read_csv(os.path.join('out', detector, 'features.csv'))
+    y_df = pd.read_csv(os.path.join('out', detector, 'labels.csv'))
     # convert to np array
     x = x_df.values
     y = y_df.values
@@ -49,9 +50,9 @@ def train_svm(tr_img, tr_lb, te_img, te_lb):
 
 
 # Testing
-all_x, all_y = get_data()
+all_x, all_y = get_data('test')
 tr_x, tr_y, te_x, te_y = split_data(all_x, all_y)
 
 
-SVM_mod = train_svm(tr_x, tr_y, te_x, te_y)  # score = 0.84086 (after a long, long time)
+# SVM_mod = train_svm(tr_x, tr_y, te_x, te_y)  # score = 0.84086 (after a long, long time)
 
