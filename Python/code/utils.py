@@ -54,17 +54,17 @@ def noise_accuracy(indx, noise_labels):
 
 
 # Report detector noise performance
-def report_noise(detector, time, noise, img_labels, img_paths):
+def report_noise(det, time, noise, img_labels, img_paths):
     noise_count = len(noise)
 
     # determine accuracy of noisy images
     false_neg = noise_accuracy(noise, img_labels)
     accuracy = 1 - len(false_neg) / len(img_paths)
 
-    f = open(os.path.join('out', detector, 'noise'), "w+")
+    f = open(os.path.join('out', det, 'noise'), "w+")
     f.write("%d noisy images were detected in %0.2f min:\r\n"
-            "Accuracy = %0.2f with grayscale and gamma correction\r\n\n"
-            % (noise_count, time / 60, accuracy))
+            "%s Accuracy = %0.2f\r\n\n"
+            % (noise_count, time / 60, det, accuracy))
     [f.write("%s, " % img_num) for img_num in noise]
     f.write("\r\n\n\n%d false negatives were found (%0.2f FNR):\r\n\n"
             % (len(false_neg), len(false_neg) / noise_count))
