@@ -8,7 +8,7 @@ from keras.preprocessing import image
 
 # Global vars
 test = False
-detectors = {"HOG": 1, "HaarCas": 2, "DNN": 3, "Test": 4}
+detectors = {"HOG": 1, "HaarCas": 2, "DNN": 3, "CNN": 4, "Test": 5}
 
 
 # Run get_landmarks on all images
@@ -71,7 +71,8 @@ def get_landmarks(det, img):
     if case == 1: rects, gray = HOG_detect(img)
     elif case == 2: rects, gray = HaarCas_detect(img)
     elif case == 3: rects, gray = DNN_detect(img)
-    else: rects, gray = DNN_detect(img)
+    elif case == 4: rects, gray = CNN_detect(img)
+    else: rects, gray = CNN_detect(img)
 
     n = len(rects)
 
@@ -159,4 +160,23 @@ def DNN_detect(img):
             rects.append(dlib.rectangle(int(x1), int(y1), int(x2), int(y2)))
 
     return rects, gray
+
+
+# Detect face using a Maximum-Margin Object
+# Detector ( MMOD ) with CNN-based features
+def CNN_detect(img):
+    img = img.astype('uint8')
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    rects = []
+    faceRects = ut.dnnFaceDetector(gray, 0)
+    for faceRect in faceRects:
+        x1 = faceRect.rect.left()
+        y1 = faceRect.rect.top()
+        x2 = faceRect.rect.right()
+        y2 = faceRect.rect.bottom()
+        rects.append(dlib.rectangle(int(x1), int(y1), int(x2), int(y2)))
+
+    return rects, gray
+
 

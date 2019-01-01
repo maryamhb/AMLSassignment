@@ -12,6 +12,7 @@ pred_dir = os.path.join('models', 'shape_predictor_68_face_landmarks.dat')
 haar_dir = os.path.join('models', 'haarcascade_frontalface_default.xml')
 model_dir = os.path.join('models', 'opencv_face_detector_uint8.pb')
 config_dir = os.path.join('models', 'opencv_face_detector.pbtxt')
+mmod_dir = os.path.join('models', 'mmod_human_face_detector.dat')
 
 
 # Models and predictors
@@ -19,6 +20,7 @@ predictor = dlib.shape_predictor(pred_dir)
 hog_detector = dlib.get_frontal_face_detector()
 face_cascade = cv2.CascadeClassifier(haar_dir)
 net = cv2.dnn.readNetFromTensorflow(model_dir, config_dir)
+dnnFaceDetector = dlib.cnn_face_detection_model_v1(mmod_dir)
 
 
 # Util functions
