@@ -1,11 +1,27 @@
 import os
 import cv2
+import dlib
 import numpy as np
 import pandas as pd
 import landmarks as lm
 
-# Util functions
+# Data directory
+img_dir = os.path.join('..', 'dataset')
+labels_dir = os.path.join('..', 'attribute_list.csv')
+pred_dir = os.path.join('models', 'shape_predictor_68_face_landmarks.dat')
+haar_dir = os.path.join('models', 'haarcascade_frontalface_default.xml')
+model_dir = os.path.join('models', 'opencv_face_detector_uint8.pb')
+config_dir = os.path.join('models', 'opencv_face_detector.pbtxt')
 
+
+# Models and predictors
+predictor = dlib.shape_predictor(pred_dir)
+hog_detector = dlib.get_frontal_face_detector()
+face_cascade = cv2.CascadeClassifier(haar_dir)
+net = cv2.dnn.readNetFromTensorflow(model_dir, config_dir)
+
+
+# Util functions
 
 # Rect to bounding box
 def rect2bb(rect):
