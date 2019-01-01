@@ -52,21 +52,37 @@ Assignment tasks:
 %The problem statement.\\
 
 % Why face recognition, why classification? (applications, need, PROBLEM!)
-This assignment aims to train machine learning models on a large dataset of images to complete the tasks of binary and multiclass classification.
+The perception of visual information is a key element of human communication, particularly those from the face. The features and characteristics of an individual's face can provide information of their identity, emotion, and intent, with potential applications in access and security, law enforcement, marketing, and banking. Researchers in the fields of computer vision have been developing technological breakthroughs %?
+in the implementation of face recognition using machine learning tools and techniques over the past decades.
+% Problem
+The image variations of real-world scenarios such as illumination, pose, expressions, and occlusions 
+have required more complex methods in need of preprocessing techniques to prepare images for training and classification. 
+% ^ FIX THIS!!
 
-%Dataset description summarising data (content, size, format, etc.) and describing any \textit{data preprocessing} applied.\\
-
-The tasks are performed on a dataset of 5000 Portable Network Graphic (PNG) image files consisting of pre-processed subsets from the \textbf{CelebFaces Attributes Dataset (CelebA)}, a celebrity image dataset  % CITE!
+% Assignment + dataset description:
+% summarising data (content, size, format, etc.) and describing any \textit{data preprocessing} applied.\\
+This assignment aims to train machine learning models and perform binary and multiclass classification on a large dataset of 5000 Portable Network Graphic (PNG) image files consisting of pre-processed subsets from the \textbf{CelebFaces Attributes Dataset (CelebA)}, a celebrity image dataset  % CITE!
 %(S. Yang, P. Luo, C. C. Loy, and X. Tang, "From facial parts responses to face detection: A Deep Learning Approach", in IEEE International Conference on Computer Vision (ICCV), 2015
 , and the \textbf{Cartoon Set}, an image dataset of random cartoons/avatarts % CITE!
 %(source: https://google.github.io/cartoonset/)
-, as well as a number of noisy images (mainly of natural backgrounds) to be detected and removed from the training data.
-All images are labelled with hair colour, and whether the subject is wearing glasses, is smilining, or is classified as human.
+, as well as a number of noisy images (mainly of natural backgrounds) to be detected and removed from the training data, which generally constitues 80\% of the entire dataset.
+All images are labelled with hair colour, whether the subject is wearing glasses, is smilining, and is classified as human.
 
-In order to train a suitable modle for the required classification tasks, facial landmarks were extracted via various detection methods using Python's Dlib and Open Source Computer Vision (OpenCV) libraries; namely the Histogram of Gradients (HoG) Face Detector accessible via Dlib, Haar Cascade Face Detector accessible via OpenCV, and the Deep Learning-based Face Detector, which can be implementable via both libraries. A comparative analysis of the performance of each method with respect to the labaled noisy images (where all labels are defined as -1) facilitated the selection of the most appropriate feature extraction method for the given dataset.
+In order to train a suitable model for the required classification tasks, several preprocessing methods were taken into consideration to provide appropriate features for the process; for instance, facial landmarks were extracted via various detection methods, %using Python's Dlib and Open Source Computer Vision (OpenCV) libraries; 
+namely the Histogram of Gradients (HoG) Face Detector% accessible via Dlib
+, Haar Cascade Face Detector% accessible via OpenCV
+, and the Deep Learning-based Face Detector%, which can be implementable via both libraries
+, to train models using Support Vector Machines (SVM) using various Kernel functions or Multi-Layer Perceptor (MLP) models with the aid of backpropagation, based on the 68 x-y coordinates of the facial landmarks predicted.
+% ^ ref to additional material for picture of landmarks and more explanation on HOGm Haar-cascade, etc.
+A comparative analysis of the performance of each method with respect to the labaled noisy images %(where all labels are defined as -1) 
+facilitated the selection of the most appropriate feature extraction method for the given dataset.
 
-Prior to each feature extraction method, a number of preprocessing techniques were carried out on the images to improve both the performance and the processing power during the later stages of the extraction, training and classification procedures. Some of the techniques that are often applied for this purpose include colour space transformation, capable of significantly reducing processing complexity, gamma correction or power-law equalisation, a non-linear function used to normalise illumination by raising the input value to the power $\gamma$, mean normalisation, etc.
+Prior to feature extraction, various preprocessing techniques were carried out on the images to improve both the performance and the processing power during the later stages of the extraction, training and classification procedures. 
+% ^ pre-pre-processing? or data preparation _for_ preprocessing?
+Some of the techniques include colour space transformation, capable of significantly reducing processing complexity, gamma correction (power-law equalisation), a non-linear function used to normalise illumination by raising the input value to the power $\gamma$, and mean normalisation.%, etc.
 % ^ Elaborate + Equations
+
+The original dataset was otherwise rescaled and augmented to avoid overfitting for alternative models more specifically used for visual recognition tasks, such as Convolutional Neural Networks (CNN), where the noisy images of the training and validation data are removed using the results of the optimum face detector method with the maximum accuracy. % Duh
 
 % ======================= Proposed algorithms ====================== %
 \section{Proposed algorithms} \label{s-algorithms}
