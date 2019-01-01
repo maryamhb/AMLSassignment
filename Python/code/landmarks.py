@@ -7,7 +7,7 @@ import utils as ut
 from keras.preprocessing import image
 
 # Test on data subset
-test = False
+test = True
 detectors = {"HOG": 1, "HaarCas": 2, "Test": 3}
 
 # Data directory
@@ -136,7 +136,7 @@ def Haar_cascade(img):
 
     # localise faces in grayscale
     face_cascade = cv2.CascadeClassifier(haar_dir)
-    rects = face_cascade.detectMultiScale(gray, 1.3, 5)
+    rects = face_cascade.detectMultiScale(gray)
     n = len(rects)
     dlib_rects = []
     # convert to dlib rect for predict
