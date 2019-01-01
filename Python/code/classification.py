@@ -50,7 +50,7 @@ def train_svm(tr_img, tr_lb, te_img, te_lb):
 
 
 # Testing
-all_x, all_y = get_data('HaarCas')
+all_x, all_y = get_data('DNN')
 tr_x, tr_y, te_x, te_y = split_data(all_x, all_y)
 
 
