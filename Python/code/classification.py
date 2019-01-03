@@ -9,7 +9,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 # Labels: index (0), hair colour (1), glasses (2), smiling (3), young (4), human (5)
 
 def get_data(detector):
-    ut.update_features(detector)
+    #ut.update_features(detector)
     x_df = pd.read_csv(os.path.join('out', detector, 'features.csv'))
     y_df = pd.read_csv(os.path.join('out', detector, 'labels.csv'))
     # convert to np array
@@ -50,9 +50,9 @@ def train_svm(tr_img, tr_lb, te_img, te_lb):
 
 
 # Testing
-all_x, all_y = get_data('DNN')
+all_x, all_y = get_data('HoG')
 tr_x, tr_y, te_x, te_y = split_data(all_x, all_y)
 
-
+print(tr_x[2])#.shape, tr_y.shape)
 # SVM_mod = train_svm(tr_x, tr_y, te_x, te_y)  # score = 0.84086 (after a long, long time)
 

@@ -60,33 +60,49 @@ def correct_gamma(img, gamma):
 
 
 # Test face detection accuracy
-def noise_accuracy(indx, noise_labels):
+def noise_accuracy(noise, img_labels):
     f_neg = []
-    for i in range(len(indx)):
-        checker = np.sum(noise_labels[indx[i]])
-        # iff all 4 labels are -1, img is noise
-        if checker > -4:
-            f_neg.append(indx[i])
+    f_pos = []
 
-    return f_neg
+    for i in range(1, len(img_labels)):
+        checker = np.sum(img_labels[str(i)])
+        if str(i) in noise:
+            if checker > -4:
+                # iff all 5 labels are -1, img is noise
+                f_neg.append(i)
+        else:
+            if checker < -4:
+                f_pos.append(i)
+
+    return f_neg, f_pos
 
 
 # Report detector noise performance
 def report_noise(det, time, noise, img_labels, img_paths):
     noise_count = len(noise)
+    img_count = len(img_labels)
 
     # determine accuracy of noisy images
-    false_neg = noise_accuracy(noise, img_labels)
-    accuracy = 1 - len(false_neg) / len(img_paths)
+    false_neg, false_pos = noise_accuracy(noise, img_labels)
+    FN_count = len(false_neg)
+    FP_count = len(false_pos)
+    true_noise = noise_count-FN_count
+    true_face = img_count - true_noise
+
+    print(true_noise, true_face)
+    accuracy = 1 - (len(false_neg)+len(false_pos)) / len(img_paths)
 
     f = open(os.path.join('out', det, 'noise'), "w+")
-    f.write("%d noisy images were detected in %0.2f min:\r\n"
-            "%s Accuracy = %0.2f\r\n\n"
-            % (noise_count, time / 60, det, accuracy))
+    f.write("%s: %d faces were detected in %0.2f min:\r\n"
+            "%d noisy images with  %0.2f accuracy\r\n\n"
+            % (det, img_count-noise_count, time / 60, noise_count, accuracy))
     [f.write("%s, " % img_num) for img_num in noise]
     f.write("\r\n\n\n%d false negatives were found (%0.2f FNR):\r\n\n"
-            % (len(false_neg), len(false_neg) / noise_count))
+            % (FN_count, FN_count / true_noise))
     [f.write("%s, " % FN) for FN in false_neg]
+    f.write("\r\n\n\n%d false positives were found (%0.2f FPR):\r\n\n"
+            % (FP_count, FP_count / true_face))
+    [f.write("%s, " % FP) for FP in false_pos]
     f.close()
 
     return

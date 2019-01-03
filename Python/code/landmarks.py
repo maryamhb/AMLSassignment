@@ -7,8 +7,8 @@ import utils as ut
 from keras.preprocessing import image
 
 # Global vars
-test = False
-detectors = {"HOG": 1, "HaarCas": 2, "DNN": 3, "CNN": 4, "Test": 5}
+test = True
+detectors = {"HoG": 1, "HaarCas": 2, "DNN": 3, "CNN": 4, "Test": 5}
 
 
 # Run get_landmarks on all images
@@ -72,7 +72,7 @@ def get_landmarks(det, img):
     elif case == 2: rects, gray = HaarCas_detect(img)
     elif case == 3: rects, gray = DNN_detect(img)
     elif case == 4: rects, gray = CNN_detect(img)
-    else: rects, gray = CNN_detect(img)
+    else: rects, gray = HOG_detect(img)
 
     n = len(rects)
 
