@@ -1,6 +1,7 @@
 import os
 import cv2
 import dlib
+import time
 import numpy as np
 import pandas as pd
 import landmarks as lm
@@ -128,16 +129,59 @@ def update_features(detector):
     return features, labels
 
 
-# Report model predictions
-def report_pred(model, t_num, names, predictions, accuracy):
-    file = 'task_' + str(t_num) + '.csv'
+# Return zero if denominator = 0
+def safe_div(num, den):
+    if den == 0:
+        return 0
+    else:
+        return num/den
 
-    f = open(os.path.join('out', 'Classification', model, file), "w+")
+
+# Report model predictions
+def report_pred(model, t_num, names
+                , predictions, conf_m):
+    file = 'task_' + str(t_num) + '.csv'
+    path = os.path.join('out', 'Classification', model)
+
+    TN = conf_m[0, 0]
+    FN = conf_m[0, 1]
+    FP = conf_m[1, 0]
+    TP = conf_m[1, 1]
+
+    TPR = safe_div(TP, (TP+FN))
+    TNR = safe_div(TN, (TN+FP))
+    prec = safe_div(TP, (TP+FP))
+
+    accuracy = (TN + TP)/len(names)
+    print(accuracy)
+
+    f = open(os.path.join(path, file), "w+")
     # Average inference accuracy
     f.write("%0.3f \r\n" % (accuracy))
     # Predictions
     [f.write("%s, %d\r\n" % (str(int(names[i]))+'.png', predictions[i])) for i in range(len(names))]
     f.close()
+
+    # Report performance
+    if t_num == 3:
+        f = open(os.path.join(path, 'performance.csv'), "w+")
+        f.write("Task, Accuracy, TP, TN, FP, FN, TPR, TNR, Precision \r\n")
+
+    else:
+        f = open(os.path.join(path, 'performance.csv'), "a")
+
+    f.write("%d, %0.3f, %d, %d, %d, %d, %0.3f, %0.3f, %0.3f \r\n"
+            % (t_num, accuracy, TP, TN, FP, FN, TPR, TNR, prec))
+    f.close()
+
+    return
+
+
+# Print time at the end of perf
+def report_time(model, t):
+    path = os.path.join('out', 'Classification', model)
+    f = open(os.path.join(path, 'performance.csv'), "a")
+    f.write("\nTime, %0.3f\r\n" % (int(t) / 60))
 
     return
 

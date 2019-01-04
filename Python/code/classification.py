@@ -1,4 +1,5 @@
 import os
+import time
 import utils as ut
 import numpy as np
 import pandas as pd
@@ -35,10 +36,10 @@ def split_data(i, x, y):
     return training_x, training_y, test_i, test_x, test_y
 
 
-def train_svm(tr_img, tr_lb, te_img, te_lb, te_i, task):
+def train_svm(tr_img, tr_lb, te_img, te_lb, te_i, mod, task):
 
     # Initialise model
-    model = svm.SVC(C=1, kernel='linear', gamma='scale')
+    model = svm.SVC(C=1, kernel='rbf', gamma='scale')
 
     # Fit model to data
     model.fit(tr_img, tr_lb)
@@ -46,25 +47,36 @@ def train_svm(tr_img, tr_lb, te_img, te_lb, te_i, task):
     # Predict test data
     prediction = model.predict(te_img)
     score = model.score(te_img, te_lb)
-    print("Pred: ", prediction, "\nScore: %0.5f" % score)
+    print("\nScore: %0.5f" % score)
+
+    conf_m = confusion_matrix(te_lb, prediction)
 
     # Report perf in csv
-    ut.report_pred("LinearReg", task, te_i, prediction, score)
-
-    # Confusion matrices
-    # print("Confusion Matrix:\n", confusion_matrix(te_lb.ravel(), prediction),
-    #       "\nClassification Report:\n", classification_report(te_lb.ravel(), prediction))
+    ut.report_pred(mod, task, te_i, prediction, conf_m)
 
     return model
 
 
 # Testing
-all_i, all_x, all_y = get_data('HoG')
-tr_x, tr_y, te_i, te_x, te_y = split_data(all_i, all_x, all_y)
+te_model = 'Test'
+
+all_i, all_x, all_y = get_data('Test')
+tr_x, tr_y, te_nom, te_x, te_y = split_data(all_i, all_x, all_y)
+
 
 # Map columns to tasks
 tasks = {1: 3, 2: 1, 3: 2, 4: 4}
 
+init = time.time()
 for col in range(1, 5):
-    train_svm(tr_x, tr_y[:, col], te_x, te_y[:, col], te_i, tasks[col])
+    print('Task', tasks[col], '-')
+    train_svm(tr_x, tr_y[:, col], te_x, te_y[:, col], te_nom, te_model, tasks[col])
+
+end = time.time()
+ut.report_time(te_model, end-init)
+
+print(end-init)
+
+
+
 

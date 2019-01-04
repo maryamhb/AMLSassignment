@@ -23,12 +23,56 @@ as listed below:
 
 ## Binary tasks
 
-The binary tasks are composed of emotion detection (1), age classification (2), glasses detection (3), and human/avatar classification.
+The average inference accuracies of the prediction on the test set (20% of the dataset) for each classification method are listed below:
 
-The average inference accuracies of the prediction on the test set (20% of the dataset) for each classification method is listed below:
+### Task 1
 
-|                 Method               | Task 1 |  Task 2 | Task 3 | Task 4 |
-| ------------------------------------ |:--------:|:-----:|:-----:|:-----:|
-| Linear regression SVM                |   0.916   |  0.779 | 0.852 | 0.971 |
+Emotion detection - smiling or !smiling
+|                 Method               | Accuracy |  Recall (TPR) | Specificity (TNR) | Precision |
+| ------------------------------ |:-----------:|:---------------:|:-------------------:|:----------:|
+| Linear regression SVM       |     0.92     |        0.96        |           0.79           |     0.94    |
+| Polynomial kernel SVM      |     0.92     |        0.96        |           0.79           |     0.94    |
+| Sigmoid kernel SVM          |     0.78     |        0.78        |           0.00           |     1.00    |
+| RBF kernel SVM                |     0.91     |        0.95        |           0.79           |     0.94    |
 
-## Multiclass tasks
+### Task 2
+
+Age identification - young or old
+|                 Method               | Accuracy |  Recall (TPR) | Specificity (TNR) | Precision |
+| ------------------------------ |:-----------:|:---------------:|:-------------------:|:----------:|
+| Linear regression SVM       |     0.78     |        0.78        |           0.00           |     1.00    |
+| Polynomial kernel SVM      |     0.79     |        0.82        |           0.54           |     0.93    |
+| Sigmoid kernel SVM          |     0.78     |        0.78        |           0.00           |     1.00    |
+| RBF kernel SVM                |     0.78     |        0.78        |           0.00           |     1.00    |
+
+### Task 3
+
+Glasses detection 
+|                 Method               | Accuracy |  Recall (TPR) | Specificity (TNR) | Precision |
+| ------------------------------ |:-----------:|:---------------:|:-------------------:|:----------:|
+| Linear regression SVM       |     0.85     |        0.80        |           0.87           |     0.64    |
+| Polynomial kernel SVM      |     0.85     |        0.76        |           0.87           |     0.67    |
+| Sigmoid kernel SVM          |     0.72     |        0.00        |           0.72           |     0.00    |
+| RBF kernel SVM                |     0.85     |        0.90        |           0.84           |     0.52    |
+
+### Task 4
+
+Human-avatar classification
+|                 Method               | Accuracy |  Recall (TPR) | Specificity (TNR) | Precision |
+| ------------------------------ |:-----------:|:---------------:|:-------------------:|:----------:|
+| Linear regression SVM       |     0.97     |        0.98        |           0.96           |     0.96    |
+| Polynomial kernel SVM      |     0.98     |        0.98        |           0.97           |     0.96    |
+| Sigmoid kernel SVM          |     0.54     |        0.00        |           0.54           |     0.00    |
+| RBF kernel SVM                |     0.97     |        0.96        |           0.97           |     0.97    |
+
+
+Time taken for each classifier to run (on all 4 tasks):
+|  Method  | Linear |  Poly | Sigmoid | RBF |
+| ---------- |:-------:|:------:|:---------:|:-----:|
+| Time       |   2.87  | 44.23 |   0.11  |  0.08  |
+
+## Multiclass task
+
+### Task 5
+
+Hair colour detection - 
