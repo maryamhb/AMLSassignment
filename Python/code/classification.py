@@ -6,41 +6,50 @@ from sklearn import svm, neural_network as nn, preprocessing as pp
 from sklearn.metrics import classification_report, confusion_matrix
 
 
-# Labels: index (0), hair colour (1), glasses (2), smiling (3), young (4), human (5)
+# Labels: hair colour (0), glasses (1), smiling (2), young (3), human (4)
+# Tasks:  emotion (1), age (2), glasses (3), human (4), hair colour (5)
 
 def get_data(detector):
     #ut.update_features(detector)
-    x_df = pd.read_csv(os.path.join('out', detector, 'features.csv'))
-    y_df = pd.read_csv(os.path.join('out', detector, 'labels.csv'))
+    i_df = pd.read_csv(os.path.join('out', 'Face_detection', detector, 'names.csv'), usecols=[1])
+    x_df = pd.read_csv(os.path.join('out', 'Face_detection', detector, 'features.csv'), usecols=[*range(1, 137)])
+    y_df = pd.read_csv(os.path.join('out', 'Face_detection', detector, 'labels.csv'), usecols=[*range(1, 6)])
     # convert to np array
+    i = i_df.values
     x = x_df.values
     y = y_df.values
 
-    return x, y
+    return i, x, y
 
 
-def split_data(x, y):
+def split_data(i, x, y):
+    # 80% training data
+    cut = int(len(i)*0.8)
     # Split training/test data
-    training_x = x[:4000]
-    training_y = y[:4000]
-    test_x = x[4000:]
-    test_y = y[4000:]
+    training_x = x[:cut]
+    training_y = y[:cut]
+    test_i = i[cut:]
+    test_x = x[cut:]
+    test_y = y[cut:]
 
-    return training_x, training_y, test_x, test_y
+    return training_x, training_y, test_i, test_x, test_y
 
 
-def train_svm(tr_img, tr_lb, te_img, te_lb):
+def train_svm(tr_img, tr_lb, te_img, te_lb, te_i, task):
 
     # Initialise model
     model = svm.SVC(C=1, kernel='linear', gamma='scale')
 
     # Fit model to data
-    model.fit(tr_img, tr_lb[:, 2])
+    model.fit(tr_img, tr_lb)
     print("SVM Model:\n", model)
     # Predict test data
     prediction = model.predict(te_img)
-    score = model.score(te_img, te_lb[:, 2])
+    score = model.score(te_img, te_lb)
     print("Pred: ", prediction, "\nScore: %0.5f" % score)
+
+    # Report perf in csv
+    ut.report_pred("LinearReg", task, te_i, prediction, score)
 
     # Confusion matrices
     # print("Confusion Matrix:\n", confusion_matrix(te_lb.ravel(), prediction),
@@ -50,9 +59,12 @@ def train_svm(tr_img, tr_lb, te_img, te_lb):
 
 
 # Testing
-all_x, all_y = get_data('HoG')
-tr_x, tr_y, te_x, te_y = split_data(all_x, all_y)
+all_i, all_x, all_y = get_data('HoG')
+tr_x, tr_y, te_i, te_x, te_y = split_data(all_i, all_x, all_y)
 
-print(tr_x[2])#.shape, tr_y.shape)
-# SVM_mod = train_svm(tr_x, tr_y, te_x, te_y)  # score = 0.84086 (after a long, long time)
+# Map columns to tasks
+tasks = {1: 3, 2: 1, 3: 2, 4: 4}
+
+for col in range(1, 5):
+    train_svm(tr_x, tr_y[:, col], te_x, te_y[:, col], te_i, tasks[col])
 

@@ -89,10 +89,9 @@ def report_noise(det, time, noise, img_labels, img_paths):
     true_noise = noise_count-FN_count
     true_face = img_count - true_noise
 
-    print(true_noise, true_face)
     accuracy = 1 - (len(false_neg)+len(false_pos)) / len(img_paths)
 
-    f = open(os.path.join('out', det, 'noise'), "w+")
+    f = open(os.path.join('out', 'Face_detection', det, 'noise'), "w+")
     f.write("%s: %d faces were detected in %0.2f min:\r\n"
             "%d noisy images with  %0.2f accuracy\r\n\n"
             % (det, img_count-noise_count, time / 60, noise_count, accuracy))
@@ -110,19 +109,36 @@ def report_noise(det, time, noise, img_labels, img_paths):
 
 # Update + store features and labels
 def update_features(detector):
-    features, labels = lm.label_features(detector)
+    index, features, labels = lm.label_features(detector)
 
     # reshape features to 2D matrix
     m = features.shape
     features = np.reshape(features, (m[0], m[1] * 2)).astype(float)
 
     # convert to dataframe + store in csv
+    df = pd.DataFrame(index)
+    df.to_csv(os.path.join('out', 'Face_detection', detector, 'names.csv'))
+
     df = pd.DataFrame(features)
-    df.to_csv(os.path.join('out', detector, 'features.csv'))
+    df.to_csv(os.path.join('out', 'Face_detection', detector, 'features.csv'))
 
     dl = pd.DataFrame(labels)
-    dl.to_csv(os.path.join('out', detector, 'labels.csv'))
+    dl.to_csv(os.path.join('out', 'Face_detection', detector, 'labels.csv'))
 
     return features, labels
+
+
+# Report model predictions
+def report_pred(model, t_num, names, predictions, accuracy):
+    file = 'task_' + str(t_num) + '.csv'
+
+    f = open(os.path.join('out', 'Classification', model, file), "w+")
+    # Average inference accuracy
+    f.write("%0.3f \r\n" % (accuracy))
+    # Predictions
+    [f.write("%s, %d\r\n" % (str(int(names[i]))+'.png', predictions[i])) for i in range(len(names))]
+    f.close()
+
+    return
 
 

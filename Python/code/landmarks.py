@@ -7,7 +7,7 @@ import utils as ut
 from keras.preprocessing import image
 
 # Global vars
-test = True
+test = False
 detectors = {"HoG": 1, "HaarCas": 2, "DNN": 3, "CNN": 4, "Test": 5}
 
 
@@ -15,6 +15,7 @@ detectors = {"HoG": 1, "HaarCas": 2, "DNN": 3, "CNN": 4, "Test": 5}
 # Return features + labels in np array
 # Store noisy images (get_landmarks = None)
 def label_features(det):
+    if det == "Test": test = True
     start = time.time()
 
     # load image + label data
@@ -25,11 +26,12 @@ def label_features(det):
     labels_file = open(ut.labels_dir, 'r')
     lines = labels_file.readlines()
     # Store all labels in a dictionary
-    img_labels = {line.split(',')[0] : [int(line.split(',')[col]) for col in range(1, 6)] for line in lines[2:]}
+    img_labels = {line.split(',')[0]: [int(line.split(',')[col]) for col in range(1, 6)] for line in lines[2:]}
 
     if os.path.isdir(ut.img_dir):
         all_features = []
         all_labels = []
+        all_names = []
         noise = []
         data_count = 0
 
@@ -41,6 +43,7 @@ def label_features(det):
                                                     interpolation='bicubic'))
             img_features, _ = get_landmarks(det, img)
             if img_features is not None:
+                all_names.append(img_name)
                 all_features.append(img_features)
                 all_labels.append(img_labels[img_name])
                 data_count += 1
@@ -51,6 +54,7 @@ def label_features(det):
 
     landmark_features = np.array(all_features)
     feature_labels = (np.array(all_labels))
+    img_names = (np.array(all_names))
 
     end = time.time()
 
@@ -59,7 +63,7 @@ def label_features(det):
     # report + store noise perf
     ut.report_noise(det, end-start, noise, img_labels, img_paths)
 
-    return landmark_features, feature_labels
+    return img_names, landmark_features, feature_labels
 
 
 # Select and run face detector

@@ -23,6 +23,12 @@ as listed below:
 
 ## Binary tasks
 
+The binary tasks are composed of emotion detection (1), age classification (2), glasses detection (3), and human/avatar classification.
 
+The average inference accuracies of the prediction on the test set (20% of the dataset) for each classification method is listed below:
+
+|                 Method               | Task 1 |  Task 2 | Task 3 | Task 4 |
+| ------------------------------------ |:--------:|:-----:|:-----:|:-----:|
+| Linear regression SVM                |   0.916   |  0.779 | 0.852 | 0.971 |
 
 ## Multiclass tasks
