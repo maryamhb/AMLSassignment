@@ -157,13 +157,13 @@ def report_pred(model, t_num, names
 
     f = open(os.path.join(path, file), "w+")
     # Average inference accuracy
-    f.write("%0.3f \r\n" % (accuracy))
+    f.write("%0.3f \r\n" % accuracy)
     # Predictions
     [f.write("%s, %d\r\n" % (str(int(names[i]))+'.png', predictions[i])) for i in range(len(names))]
     f.close()
 
     # Report performance
-    if t_num == 3:
+    if t_num == 5:
         f = open(os.path.join(path, 'performance.csv'), "w+")
         f.write("Task, Accuracy, TP, TN, FP, FN, TPR, TNR, Precision \r\n")
 

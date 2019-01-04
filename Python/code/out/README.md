@@ -35,39 +35,43 @@ Emotion detection - smiling or !smiling
 | Polynomial kernel SVM          |     0.92    |     0.96      |        0.79       |   0.94    |
 | Sigmoid kernel SVM             |     0.78    |     0.78      |        0.00       |   1.00    |
 | RBF kernel SVM                 |     0.91    |     0.95      |        0.79       |   0.94    |
+| Relu-based MLP (3, 2)       |     0.93    |     0.95      |        0.86       |   0.96    |
 
 ### Task 2
 
 Age identification - young or old
 
-|           Method        | Accuracy |  Recall (TPR) | Specificity (TNR) | Precision |
-| ----------------------- |:--------:|:-------------:|:-----------------:|:---------:|
-| Linear regression SVM   |   0.78   |     0.78      |        0.00       |   1.00    |
-| Polynomial kernel SVM   |   0.79   |     0.82      |        0.54       |   0.93    |
-| Sigmoid kernel SVM      |   0.78   |     0.78      |        0.00       |   1.00    |
-| RBF kernel SVM          |   0.78   |     0.78      |        0.00       |   1.00    |
+|              Method            |   Accuracy  |  Recall (TPR) | Specificity (TNR) | Precision |
+| ------------------------------ |:-----------:|:-------------:|:-----------------:|:---------:|
+| Linear regression SVM         |   0.78   |     0.78      |        0.00       |   1.00    |
+| Polynomial kernel SVM         |   0.79   |     0.82      |        0.54       |   0.93    |
+| Sigmoid kernel SVM            |   0.78   |     0.78      |        0.00       |   1.00    |
+| RBF kernel SVM                 |   0.78   |     0.78      |        0.00       |   1.00    |
+| Relu-based MLP (3, 2)       |     0.79    |     0.81      |        0.60       |   0.96    |
 
 ### Task 3
 
 Glasses detection - with or without
 
-|           Method        | Accuracy |  Recall (TPR) | Specificity (TNR) | Precision |
-| ----------------------- |:--------:|:-------------:|:-----------------:|:---------:|
-| Linear regression SVM   |   0.85   |     0.80      |        0.87       |    0.64   |
-| Polynomial kernel SVM   |   0.85   |     0.76      |        0.87       |    0.67   |
-| Sigmoid kernel SVM      |   0.72   |     0.00      |        0.72       |    0.00   |
-| RBF kernel SVM          |   0.85   |     0.90      |        0.84       |    0.52   |
+|              Method            |   Accuracy  |  Recall (TPR) | Specificity (TNR) | Precision |
+| ------------------------------ |:-----------:|:-------------:|:-----------------:|:---------:|
+| Linear regression SVM         |   0.85   |     0.80      |        0.87       |    0.64   |
+| Polynomial kernel SVM         |   0.85   |     0.76      |        0.87       |    0.67   |
+| Sigmoid kernel SVM            |   0.72   |     0.00      |        0.72       |    0.00   |
+| RBF kernel SVM                 |   0.85   |     0.90      |        0.84       |    0.52   |
+| Relu-based MLP (3, 2)       |     0.86    |     0.81      |        0.88       |   0.66    |
 
 ### Task 4
 
 Human classification - real or !real
 
-|           Method        | Accuracy |  Recall (TPR) | Specificity (TNR) | Precision |
-| ----------------------- |:--------:|:-------------:|:-----------------:|:---------:|
-| Linear regression SVM   |   0.97   |     0.98      |       0.96        |    0.96   |
-| Polynomial kernel SVM   |   0.98   |     0.98      |       0.97        |    0.96   |
-| Sigmoid kernel SVM      |   0.54   |     0.00      |       0.54        |    0.00   |
-| RBF kernel SVM          |   0.97   |     0.96      |       0.97        |    0.97   |
+|              Method            |   Accuracy  |  Recall (TPR) | Specificity (TNR) | Precision |
+| ------------------------------ |:-----------:|:-------------:|:-----------------:|:---------:|
+| Linear regression SVM         |   0.97   |     0.98      |       0.96        |    0.96   |
+| Polynomial kernel SVM         |   0.98   |     0.98      |       0.97        |    0.96   |
+| Sigmoid kernel SVM            |   0.54   |     0.00      |       0.54        |    0.00   |
+| RBF kernel SVM                 |   0.97   |     0.96      |       0.97        |    0.97   |
+| Relu-based MLP (3, 2)        |     0.97    |     0.99      |        0.96       |   0.95    |
 
 
 Time taken for each classifier to run (on all 4 tasks):
