@@ -1,10 +1,11 @@
 import os
 import cv2
 import dlib
-import time
 import numpy as np
 import pandas as pd
 import landmarks as lm
+import matplotlib.pyplot as plt
+from sklearn.model_selection import learning_curve
 
 # Data directory
 img_dir = os.path.join('..', 'dataset')
@@ -137,11 +138,11 @@ def safe_div(num, den):
         return num/den
 
 
-# Report model predictions
-def report_pred(model, t_num, names
-                , predictions, conf_m):
+# Report model predictions into csv
+def report_pred(model, arg, t_num, names
+                , predictions, conf_m, cv_score):
     file = 'task_' + str(t_num) + '.csv'
-    path = os.path.join('out', 'Classification', model)
+    path = os.path.join('out', 'Classification', model, arg)
 
     TN = conf_m[0, 0]
     FN = conf_m[0, 1]
@@ -153,7 +154,6 @@ def report_pred(model, t_num, names
     prec = safe_div(TP, (TP+FP))
 
     accuracy = (TN + TP)/len(names)
-    print(accuracy)
 
     f = open(os.path.join(path, file), "w+")
     # Average inference accuracy
@@ -163,26 +163,61 @@ def report_pred(model, t_num, names
     f.close()
 
     # Report performance
-    if t_num == 5:
-        f = open(os.path.join(path, 'performance.csv'), "w+")
-        f.write("Task, Accuracy, TP, TN, FP, FN, TPR, TNR, Precision \r\n")
+    perf_file = 'multiclass' if t_num == 5 else 'binary'
+
+    if t_num == 3:
+        f = open(os.path.join(path, perf_file + '.csv'), "w+")
+        f.write("Task, Accuracy, TP, TN, FP, FN, TPR, TNR, Precision, CV-ave\r\n")
 
     else:
-        f = open(os.path.join(path, 'performance.csv'), "a")
+        f = open(os.path.join(path, perf_file + '.csv'), "a")
 
-    f.write("%d, %0.3f, %d, %d, %d, %d, %0.3f, %0.3f, %0.3f \r\n"
-            % (t_num, accuracy, TP, TN, FP, FN, TPR, TNR, prec))
+    f.write("%d, %0.3f, %d, %d, %d, %d, %0.3f, %0.3f, %0.3f, %0.3f\r\n"
+            % (t_num, accuracy, TP, TN, FP, FN, TPR, TNR, prec, np.mean(cv_score)))
     f.close()
 
     return
 
 
 # Print time at the end of perf
-def report_time(model, t):
-    path = os.path.join('out', 'Classification', model)
-    f = open(os.path.join(path, 'performance.csv'), "a")
+def report_time(t_num, model, arg, t):
+    file = 'multiclass' if t_num == 5 else 'binary'
+    path = os.path.join('out', 'Classification', model, arg)
+    f = open(os.path.join(path, file+'.csv'), "a")
     f.write("\nTime, %0.3f\r\n" % (int(t) / 60))
+    f.close()
 
     return
 
+
+# Plot learning curve
+def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
+                        n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5)):
+
+    plt.figure()
+    plt.title(title)
+    if ylim is not None:
+        plt.ylim(*ylim)
+    plt.xlabel("Training examples")
+    plt.ylabel("Score")
+    train_sizes, train_scores, test_scores = learning_curve(
+        estimator, X, y, cv=cv, n_jobs=n_jobs, train_sizes=train_sizes)
+    train_scores_mean = np.mean(train_scores, axis=1)
+    train_scores_std = np.std(train_scores, axis=1)
+    test_scores_mean = np.mean(test_scores, axis=1)
+    test_scores_std = np.std(test_scores, axis=1)
+    plt.grid()
+
+    plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
+                     train_scores_mean + train_scores_std, alpha=0.1,
+                     color="r")
+    plt.fill_between(train_sizes, test_scores_mean - test_scores_std,
+                     test_scores_mean + test_scores_std, alpha=0.1, color="g")
+    plt.plot(train_sizes, train_scores_mean, 'o-', color="r",
+             label="Training score")
+    plt.plot(train_sizes, test_scores_mean, 'o-', color="g",
+             label="Cross-validation score")
+
+    plt.legend(loc="best")
+    return plt
 
