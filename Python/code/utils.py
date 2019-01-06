@@ -290,8 +290,6 @@ def denoise_training(tr_i, tr_x, tr_y):
     tr_xx = np.array(tr_x)
     tr_yy = np.array(tr_y).ravel()
 
-    print(tr_xx.shape, tr_yy.shape)
-
     return tr_xx, tr_yy
 
 

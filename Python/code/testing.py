@@ -1,3 +1,4 @@
+from sklearn.metrics import confusion_matrix
 from keras.utils import to_categorical
 from keras.preprocessing import image
 from keras.optimizers import Adam
@@ -149,6 +150,8 @@ def test_multiclass():
 # Get data, run multi-class classifiers
 # Store predictions, stats and images
 def test_deeplearn():
+    init = time.time()
+
     # initialise the number of epochs, initial
     # learning rate, and batch size
     epoch_n = 25
@@ -160,31 +163,36 @@ def test_deeplearn():
     data = []
     names = []
     labels = []
+    count = 0
 
-    img_paths, img_labels = ut.load_data(5, 6)
-
+    # extract processed images and labels
+    img_paths, img_labels = ut.load_data(1, 2)
     if os.path.isdir(ut.img_dir):
-
         for img_path in img_paths:
             img_name = img_path.split('.')[2].split('/')[-1]
 
-            img = image.img_to_array(image.load_img(img_path,
-                                                    target_size=None,
-                                                    interpolation='bicubic'))
+            img = cv2.imread(img_path)
+            img = cv2.resize(img, (28, 28))
+            img = image.img_to_array(img)
 
             data.append(img)
             names.append(img_name)
             labels.append(img_labels[img_name])
+            
+            count +=1
+            #if count > 50: break
 
         # scale the raw pixel intensities to the range [0, 1]
         data = np.array(data, dtype="float") / 255.0
         labels = np.array(labels)
 
+    # TODO: split data to training, validation and test
     # partition data into training and testing
-    tr_x, tr_y, _, te_x, te_y = cls.split_data(names, data, labels)
+    tr_x, tr_y, te_i, te_x, te_y = cls.split_data(names, data, labels)
 
     # remove noise from training data using HoG
-    tr_xx, tr_yy = ut.denoise_training(img_paths, img_labels, len(tr_x))
+    print("Denoising training set")
+    tr_xx, tr_yy = ut.denoise_training(names[0:len(tr_x)], tr_x, tr_y)
 
     # convert the labels from integers to vectors
     tr_yy = to_categorical(tr_yy, num_classes=6)
@@ -196,8 +204,9 @@ def test_deeplearn():
                               horizontal_flip=True, fill_mode="nearest")
 
     # initialise the model
-    print("Compiling model...")
+    print("Compiling model")
     model = LeNet.build(width=28, height=28, depth=3, classes=6)
+    print(type(model))
     opt = Adam(lr=init_alpha, decay=init_alpha / epoch_n)
     model.compile(loss="categorical_crossentropy", optimizer=opt,
                   metrics=["accuracy"])
@@ -210,23 +219,58 @@ def test_deeplearn():
 
     # save the model to disk
     print("Serialising network")
-    model.save('multiclass.model')
+
+    # directory to store results
+    CNN_dir = os.path.join('out', 'Classification', 'CNN')
+    model.save(os.path.join(CNN_dir, 'multiclass.model'))
 
     # plot the training loss and accuracy
     plt.style.use("ggplot")
     plt.figure()
     N = epoch_n
-    plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
-    plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
     plt.plot(np.arange(0, N), H.history["acc"], label="train_acc")
     plt.plot(np.arange(0, N), H.history["val_acc"], label="val_acc")
-    plt.title("Training Loss and Accuracy on Hair Colour")
+    plt.title("Training Accuracy on Hair Colour")
     plt.xlabel("Epoch #")
-    plt.ylabel("Loss/Accuracy")
+    plt.ylabel("Accuracy")
     plt.legend(loc="lower left")
-    plt.savefig('multiclass_plot.png')
+    plt.savefig(os.path.join('out', 'Graphs', 'T5_CNN_Keras.png'))
+
+    # predict test data
+    probs_list = model.predict(te_x)
+
+    # extract labels from probabilities
+    te_len = len(probs_list)
+    preds = np.zeros(te_len)
+    i = 0
+    for prob in probs_list:
+        max_prob = 0
+        j = 0
+        for p in prob:
+            if p > max_prob:
+                preds[i] = -1 if j == 0 else j
+                max_prob = p
+            j += 1
+        i += 1
+
+    # Turn true labels into 1D array
+    te_labels = np.zeros(te_len)
+    for row in range(te_len):
+        for col in range(6):
+            if te_y[row][col] == 1:
+                te_labels[row] = col if col > 0 else -1
+
+    # get confusion matrix
+    conf_m = confusion_matrix(te_labels, preds)
+    end = time.time()
+
+    print(preds)
+
+    # store accuracy and predictions
+    ut.report_multiclass('CNN', '', te_i, preds, conf_m)
+    ut.report_time(5, 'CNN', '', end - init)
 
     return 0
 
 
-test_multiclass()
+test_deeplearn()
