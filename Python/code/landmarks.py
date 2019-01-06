@@ -1,13 +1,13 @@
-import os
-import cv2
-import dlib
-import time
+from keras.preprocessing import image
 import numpy as np
 import utils as ut
-from keras.preprocessing import image
+import dlib
+import time
+import cv2
+import os
+
 
 # Global vars
-test = False
 detectors = {"HoG": 1, "HaarCas": 2, "DNN": 3, "CNN": 4, "Test": 5}
 
 
@@ -15,25 +15,20 @@ detectors = {"HoG": 1, "HaarCas": 2, "DNN": 3, "CNN": 4, "Test": 5}
 # Return features + labels in np array
 # Store noisy images (get_landmarks = None)
 def label_features(det):
-    if det == "Test": test = True
+    test = True if det == "Test" else False
     start = time.time()
 
-    # load image + label data
-    img_paths = [os.path.join(ut.img_dir, l) for l in os.listdir(ut.img_dir)]
-    # order items
-    img_paths = sorted(sorted(img_paths), key=len, reverse=False)
+    # initialise lists
+    all_features = []
+    all_labels = []
+    all_names = []
+    noise = []
+    data_count = 0
 
-    labels_file = open(ut.labels_dir, 'r')
-    lines = labels_file.readlines()
-    # Store all labels in a dictionary
-    img_labels = {line.split(',')[0]: [int(line.split(',')[col]) for col in range(1, 6)] for line in lines[2:]}
+    # load image + label data
+    img_paths, img_labels = ut.load_data(1, 6)
 
     if os.path.isdir(ut.img_dir):
-        all_features = []
-        all_labels = []
-        all_names = []
-        noise = []
-        data_count = 0
 
         for img_path in img_paths:
             img_name = img_path.split('.')[2].split('/')[-1]

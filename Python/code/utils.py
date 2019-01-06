@@ -1,11 +1,13 @@
-import os
-import cv2
-import dlib
-import numpy as np
-import pandas as pd
-import landmarks as lm
-import matplotlib.pyplot as plt
 from sklearn.model_selection import learning_curve
+from keras.preprocessing import image
+import matplotlib.pyplot as plt
+import landmarks as lm
+import pandas as pd
+import numpy as np
+import dlib
+import cv2
+import os
+
 
 # Data directory
 img_dir = os.path.join('..', 'dataset')
@@ -26,6 +28,21 @@ dnnFaceDetector = dlib.cnn_face_detection_model_v1(mmod_dir)
 
 
 # Util functions
+
+# Load images and labels
+def load_data(col1, coln):
+    # get directories
+    img_paths = [os.path.join(img_dir, l) for l in os.listdir(img_dir)]
+    # order items
+    img_paths = sorted(sorted(img_paths), key=len, reverse=False)
+
+    labels_file = open(labels_dir, 'r')
+    lines = labels_file.readlines()
+    # store all labels in a dictionary
+    img_labels = {line.split(',')[0]: [int(line.split(',')[col]) for col in range(col1, coln)] for line in lines[2:]}
+
+    return img_paths, img_labels
+
 
 # Rect to bounding box
 def rect2bb(rect):
@@ -138,9 +155,9 @@ def safe_div(num, den):
         return num/den
 
 
-# Report model predictions into csv
-def report_pred(model, arg, t_num, names
-                , predictions, conf_m, cv_score):
+# Report binary model predictions into csv
+def report_binary(model, arg, t_num, names,
+                  predictions, conf_m, cv_score):
     file = 'task_' + str(t_num) + '.csv'
     path = os.path.join('out', 'Classification', model, arg)
 
@@ -163,9 +180,10 @@ def report_pred(model, arg, t_num, names
     f.close()
 
     # Report performance
-    perf_file = 'multiclass' if t_num == 5 else 'binary'
+    perf_file = 'binary'
+    first_t = 3
 
-    if t_num == 3:
+    if t_num == first_t:
         f = open(os.path.join(path, perf_file + '.csv'), "w+")
         f.write("Task, Accuracy, TP, TN, FP, FN, TPR, TNR, Precision, CV-ave\r\n")
 
@@ -177,6 +195,41 @@ def report_pred(model, arg, t_num, names
     f.close()
 
     return
+
+
+# Report multiclass model predictions into csv
+def report_multiclass(model, arg, names,
+                      predictions, conf_m):
+    # define path
+    file = 'task_5.csv'
+    path = os.path.join('out', 'Classification', model, arg)
+
+    # calculate accuracy
+    true_sum = 0
+    for i in range(0,len(conf_m)):
+        true_sum += conf_m[i, i]
+    score = true_sum/np.sum(conf_m)
+
+    f = open(os.path.join(path, file), "w+")
+    # Average inference accuracy
+    f.write("%0.3f \r\n" % score)
+    # Predictions
+    [f.write("%s, %d\r\n" % (str(int(names[i])) + '.png', predictions[i])) for i in range(len(names))]
+    f.close()
+
+    perf_file = os.path.join(path, 'multiclass.csv')
+
+    df = pd.DataFrame(conf_m)
+    df.to_csv(perf_file)
+
+    f = open(perf_file, "a")
+    # Average inference accuracy
+    f.write("\r\nAccuracy,")
+    # Predictions
+    f.write("%0.2f\r\n" % score)
+    f.close()
+
+    return 0
 
 
 # Print time at the end of perf
@@ -220,4 +273,62 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
 
     plt.legend(loc="best")
     return plt
+
+
+# Remove noise with previously-run HoG data
+def denoise_training(tr_i, tr_x, tr_y):
+    tr_xx = []
+    tr_yy = []
+    # access filtered names
+    i_df = pd.read_csv(os.path.join('out', 'Face_detection',
+                                    'HoG', 'names.csv'), usecols=[1])
+    for i in tr_i:
+        if i in i_df:
+            tr_xx.append(tr_x[i])
+            tr_yy.append(tr_y[i])
+
+    tr_xx = np.array(tr_x)
+    tr_yy = np.array(tr_y).ravel()
+
+    print(tr_xx.shape, tr_yy.shape)
+
+    return tr_xx, tr_yy
+
+
+# Remove noisy data by running HoG
+def HoG_denoise_tr(img_paths, img_labels, tr_n):
+    tr_i = []
+    tr_x = []
+    tr_y = []
+
+    for img_path in img_paths:
+        img_name = img_path.split('.')[2].split('/')[-1]
+
+        img = image.img_to_array(image.load_img(img_path,
+                                                target_size=None,
+                                                interpolation='bicubic'))
+        faces, _ = lm.get_landmarks('HoG', img)
+        if faces is not None:
+            # Halve image size x3 to reduce complexity
+            img = cv2.resize(img, (32, 32))
+
+            tr_i.append(img_name)
+            tr_x.append(img)
+            tr_y.append(img_labels[img_name])
+
+        if img_path == img_paths[tr_n]: break
+
+    tr_img = np.array(tr_x)
+    tr_yy = np.array(tr_y).ravel()
+
+    print(tr_img.shape, tr_yy.shape)
+
+    # reshape images to 2D matrix
+    m = tr_img.shape
+    tr_xx = np.reshape(tr_img, (m[0], m[1] * m[2] * 3)).astype(float)
+
+    print(tr_xx.shape, tr_yy.shape)
+
+    return tr_xx, tr_yy
+
 
