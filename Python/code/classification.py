@@ -27,9 +27,9 @@ def get_data(detector):
 
 # Partition training and test
 # data into 80-20% of sample size
-def split_data(i, x, y):
-    # 80% training data
-    cut = int(len(i)*0.8)
+def split_data(i, x, y, s):
+    # s% training data
+    cut = int(len(x)*(s/100))
     # Split training/test data
     training_x = x[:cut]
     training_y = y[:cut]

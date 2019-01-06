@@ -28,7 +28,7 @@ def test_binary():
     arg = 'lbfgs'
     all_i, all_x, all_y = cls.get_data('HoG')
 
-    tr_x, tr_y, te_nom, te_x, te_y = cls.split_data(all_i, all_x, all_y)
+    tr_x, tr_y, te_nom, te_x, te_y = cls.split_data(all_i, all_x, all_y, 80)
 
     # Map columns to tasks
     tasks = {0: 5, 1: 3, 2: 1, 3: 2, 4: 4}
@@ -123,7 +123,7 @@ def test_multiclass():
     imgs = np.reshape(imgs, (m[0], m[1] * m[2] * 3)).astype(float)
 
     # split dataset into training and test
-    tr_x, tr_y, te_nom, te_x, te_y = cls.split_data(all_i, imgs, labels)
+    tr_x, tr_y, te_nom, te_x, te_y = cls.split_data(all_i, imgs, labels, 80)
 
     # remove noise from training data using HoG
     print('Removing noise')
@@ -180,22 +180,28 @@ def test_deeplearn():
             labels.append(img_labels[img_name])
             
             count +=1
-            #if count > 50: break
+            #if count > 500: break
 
         # scale the raw pixel intensities to the range [0, 1]
         data = np.array(data, dtype="float") / 255.0
         labels = np.array(labels)
 
-    # TODO: split data to training, validation and test
     # partition data into training and testing
-    tr_x, tr_y, te_i, te_x, te_y = cls.split_data(names, data, labels)
+    tr_x, tr_y, te_i, te_x, te_y = cls.split_data(names, data, labels, 80)
+    print(te_x.shape)
+
+    # separate training and validation sets
+    train_x, train_y, _, val_x, val_y = cls.split_data(names, tr_x, tr_y, 80)
+    print(val_x.shape)
+    print(train_x.shape)
 
     # remove noise from training data using HoG
     print("Denoising training set")
-    tr_xx, tr_yy = ut.denoise_training(names[0:len(tr_x)], tr_x, tr_y)
+    tr_xx, tr_yy = ut.denoise_training(names[0:len(train_x)], train_x, train_y)
 
     # convert the labels from integers to vectors
     tr_yy = to_categorical(tr_yy, num_classes=6)
+    val_y = to_categorical(val_y, num_classes=6)
     te_y = to_categorical(te_y, num_classes=6)
 
     # construct the image generator for data augmentation
@@ -214,14 +220,15 @@ def test_deeplearn():
     # train the network
     print("Training network")
     H = model.fit_generator(aug.flow(tr_xx, tr_yy, batch_size=batch_n),
-                            validation_data=(te_x, te_y), steps_per_epoch=len(tr_xx) // batch_n,
+                            validation_data=(val_x, val_y), steps_per_epoch=len(tr_xx) // batch_n,
                             epochs=epoch_n, verbose=1)
 
     # save the model to disk
     print("Serialising network")
 
     # directory to store results
-    CNN_dir = os.path.join('out', 'Classification', 'CNN')
+    folder_nom = 'CNN'
+    CNN_dir = os.path.join('out', 'Classification', folder_nom)
     model.save(os.path.join(CNN_dir, 'multiclass.model'))
 
     # plot the training loss and accuracy
@@ -234,7 +241,7 @@ def test_deeplearn():
     plt.xlabel("Epoch #")
     plt.ylabel("Accuracy")
     plt.legend(loc="lower left")
-    plt.savefig(os.path.join('out', 'Graphs', 'T5_CNN_Keras.png'))
+    plt.savefig(os.path.join('out', 'Graphs', 'T5_' + folder_nom + '_Keras.png'))
 
     # predict test data
     probs_list = model.predict(te_x)
@@ -267,8 +274,8 @@ def test_deeplearn():
     print(preds)
 
     # store accuracy and predictions
-    ut.report_multiclass('CNN', '', te_i, preds, conf_m)
-    ut.report_time(5, 'CNN', '', end - init)
+    ut.report_multiclass(folder_nom, '', te_i, preds, conf_m)
+    ut.report_time(5, folder_nom, '', end - init)
 
     return 0
 
