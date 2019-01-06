@@ -49,7 +49,7 @@ Assignment tasks:
 % ========================== Introduction ========================== %
 \section{Introduction} \label{s-intro}
 
-%The problem statement.\\
+% The problem statement.\\
 
 % Why face recognition, why classification? (applications, need, PROBLEM!)
 The perception of visual information is a key element of human communication, particularly those from the face. The features and characteristics of an individual's face can provide information of their identity, emotion, and intent, with potential applications in access and security, law enforcement, marketing, and banking. Researchers in the fields of computer vision have been developing technological breakthroughs %?
@@ -66,13 +66,9 @@ This assignment aims to train machine learning models and perform binary and mul
 , and the \textbf{Cartoon Set}, an image dataset of random cartoons/avatarts % CITE!
 %(source: https://google.github.io/cartoonset/)
 , as well as a number of noisy images (mainly of natural backgrounds) to be detected and removed from the training data, which generally constitues 80\% of the entire dataset.
-All images are labelled with hair colour, whether the subject is wearing glasses, is smilining, and is classified as human.
+All images are labelled with hair colour, whether the subject is wearing glasses, is smiliing, and is classified as human.
 
-In order to train a suitable model for the required classification tasks, several preprocessing methods were taken into consideration to provide appropriate features for the process; for instance, facial landmarks were extracted via various detection methods, %using Python's Dlib and Open Source Computer Vision (OpenCV) libraries; 
-namely the Histogram of Gradients (HoG) Face Detector% accessible via Dlib
-, Haar Cascade Face Detector% accessible via OpenCV
-, and the Deep Learning-based Face Detector%, which can be implementable via both libraries
-, to train models using Support Vector Machines (SVM) using various Kernel functions or Multi-Layer Perceptor (MLP) models with the aid of backpropagation, based on the 68 x-y coordinates of the facial landmarks predicted.
+In order to train a suitable model for the required classification tasks, several preprocessing methods were taken into consideration to provide appropriate features for the process; for instance, facial landmarks were extracted upon face detection to train models using supervised learning algorithms such as Support Vector Machines (SVM) or  Multi-Layer Perceptor (MLP) models based on the extracted facial landmarks.
 % ^ ref to additional material for picture of landmarks and more explanation on HOGm Haar-cascade, etc.
 A comparative analysis of the performance of each method with respect to the labaled noisy images %(where all labels are defined as -1) 
 facilitated the selection of the most appropriate feature extraction method for the given dataset.
@@ -87,22 +83,70 @@ The original dataset was otherwise rescaled and augmented to avoid overfitting f
 % ======================= Proposed algorithms ====================== %
 \section{Proposed algorithms} \label{s-algorithms}
 
-Algorithmic approach used to solve the problem.\\
+% Algorithmic approach used to solve the problem.\\
+% Explain rationale behind choices, i.e. detail your \textit{reasons for selecting a particular model}.\\
 
-% feature extraction methods 
+% Feature extraction methods 
+A major step of the extraction of facial information for various classification tasks such as age, gender, emotion, and other attributes apparent on the face is to localise the fiducial facial key points \cite{landmark_lit}. The landmarks provide a set of $x$ and $y$ coordinates that either describe the specific points that describe a unique location of a particular component, or lay out the contours connecting those points, such as those shown in Figure \ref{fig: landmarks}.
+Several algorithms have been developed to achieve this purpose, namely the Haar cascade classifier, the first real-time face detector proposed in 2001, the Histogram of Oriented Gradients feature with a linear classifier, and various Deep Learning-based detectors, which are significantly more accurate than the former two methods, though at a cost of higher complexity.
+% TODO: How does the HOG work?
 
-% training models: svm, nn, etc.
+\begin{figure} [h] % Landmarks
+  \centering
+    \includegraphics[width=0.5\textwidth]{graphs/landmarks} 
+    \caption{Face shape defined by 68 landmarks}
+    \label{fig: landmarks}
+\end{figure}
 
-Explain rationale behind choices, i.e. detail your \textit{reasons for selecting a particular model}.\\
+The relative balance between the expected accuracy and complexity of a HoG detector with respect to the Haar casccade and Deep Learning options makes it preferable for this dataset. Nonetheless, a comparative analysis was perfomed by recording the accuracy and training time of each detector as a measure of performance and complexity.
 
-% expected performance, overfitting, etc.
+% SVM model
+Classification of the binary tasks was performed using the landmark features to train models with supervised learning algorithms, namely Support-Vector Machines (SVM), which are capable of linearly separating classes in a high-dimensional space through the implementation of different kernel functions. 
+% Gradient descent
+The hyperplane which isolates one class from another can be refined via gradient descent, an iterative optimisation algorithm, such as that shown in Equation \ref{eq: GD}, which represents the gradient in linear regression for a model of n data points and m features. This technique is used to minimise a parameter called the cost function, which represents an attribute of the error in the response, such as the squared sum of residuals.
+% TODO: Hyperparameter selection
+
+\begin{equation}
+\theta_{j+1} = \theta_j - \frac{\alpha}{n} \sum_{i=1}^n \bigg[\sum_{k=1}^m \theta_k x_k^{(i)} - y^{(i)} \bigg] x_j^{(i)} 
+\label{eq: GD}
+\end{equation}
+
+% MLP model
+Higher-complexity models based on artificial neural networks that are capable of providing higher accuracies were also implemented using the features extracted. A Multi-Layer Perceptron (MLP) model, which carries out the training using Backpropagation, an efficient method that computes the partial derivates in gradient descent, was therefore selected for the binary tasks. The derivatives are calculated from each layer's error term, $\delta_i^l$, which is computed using Equation \ref{eq: backprop}, for $a^{(l)}$ representing the activation vector of layer $l$, resulting in the output $z^{(l)} = \theta^{(l)} a^{(l)}$ for that layer.
+% TODO: Hyperparameter selection
+
+\begin{equation}
+\delta^{(l)} = \big(\theta^{(l)}\big)^T \delta^{(l+1)}.g'(z^{(l)})
+\label{eq: backprop}
+\end{equation}
+
+% CNN model
+Despite the minimised processing requirement when the landmark features are used, they pose limitations to classification tasks less reliant on the key component locations, and requiring important information ommited from the images such as colour. Thus, for the final task of detecting hair colour, a more commonly-used classifier for image processing with multilayer neural networks called Convolutional Neural Networks (CNN) was implemented on a LeNet architecture. The popularity of CNNs in image classification is primarily due to the 3D volumes of neurons, resuling in connectivities of small regions between layers (known as the receptive field), which can result in a lower complexity than the traditional neural networks, while taking advantage of 3-dimensional images. 
+% LeNet architectures
+The LeNet architecture is a small yet powerful tool for image classification using CNN. Primarily used for Optical Character Recognition (OCR), LeNet implements a 7-level convolutional network composed of convolutional layers, (ReLU) activation and pooling layers, as illustrated in Figure \ref{fig: LeNet}.
+
+\begin{figure} [h] % LeNet architecture from LeCun
+  \centering
+    \includegraphics[width=0.5\textwidth]{graphs/LeNet} 
+    \caption{Architecture of LeNet-5 by LeCun et al. \cite{LeCun}}
+    \label{fig: LeNet}
+\end{figure}
+
+% Expected performance - overfitting
+Increasing the number of layers in a neural network is often believed to provide a better model, given the higher complexity. However, a model can be easily overfit to the training set if the parameters follow the data too closely.
+In order to obtain a more generalised model of the data, cross-validation was selected to perform out-of-sample testing on the dataset.
+% TODO: Explain cross-validation
 
 % ========================= Implementation ======================== %
 \section{Implementation} \label{s-implement}
 
-Provide name and use of \textit{external libraries} and explain how \textit{model parameters} were selected.\\
+% Provide name and use of \textit{external libraries} and explain how \textit{model parameters} were selected.\\
+
+% Preprocessing
+Two of the main Python libraries 
 
 % scikit-learn -> svm, neural networks, etc.
+The 
 
 % cross-validation methods on various parameter values
 
