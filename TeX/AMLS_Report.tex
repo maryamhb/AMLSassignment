@@ -53,7 +53,7 @@ Assignment tasks:
 \begin{center} \large \textbf{Abstract} \end{center}
 % \textit{Brief overview of the methodology/results presented.}\\
 
-Machine learning algorithms have been implemented for the detection and classification of human faces with binary and multiclass attributes using the Python programming language with several image manipulation and machine learning libraries. A comparative analysis of the performance of the different techniques for face detection and classification provided a higher obtainable accuracy from neural network architectures, particularly the single-shot-multibox detector for accurate face detection, the multi-layer perceptron model for binary classification tasks, with accuracies above 0.8, and the LeNet convolutional neural network architecture for multiclass classification, providing an accuracy of 0.81 on the hair colour classification task. The code and all results can be accessed via  \href{https://drive.google.com/file/d/1WXVxgsFRLl0BnZnKn3MUFrzJA3oxCLS6/view?usp=sharing}{Google Drive} or directly from the  \href{https://github.com/maryamhb/AMLSassignment}{GitHub repository}.
+Machine learning algorithms have been implemented for the detection and classification of human faces with binary and multiclass attributes using the Python programming language with several image manipulation and machine learning libraries. A comparative analysis of the performance of the different techniques for face detection and classification provided a higher obtainable accuracy from neural network architectures, particularly the single-shot-multibox detector for accurate face detection, the multi-layer perceptron model for binary classification tasks, with accuracies above 0.8, and the LeNet convolutional neural network architecture for multiclass classification, providing an accuracy of 0.81 on the hair colour classification task. The code is accessible via  \href{https://drive.google.com/file/d/1WXVxgsFRLl0BnZnKn3MUFrzJA3oxCLS6/view?usp=sharing}{Google Drive} or directly from the  \href{https://github.com/maryamhb/AMLSassignment}{GitHub repository}, where additional results on the model performances can be found.
 
 % ========================== Introduction ========================== %
 \section{Introduction} \label{s-intro}
@@ -106,9 +106,9 @@ Several algorithms have been developed to achieve this purpose, namely the Haar 
 
 % Deep learning-based
 One such Deep Learning-based face detector based on Deep Neural Networks (DNN) is known as the Single-Shot-Multibox Detector (SSD), which uses the ResNet-10 architecture as a backbone. This method is ideal for a dataset with various orientations and considerable occlusion in the images; however, the complexity of the model requires a longer amount of time to carry out the detection.
-Another detector with Convolutional Neural Network (CNN) features is called the Maximum-Margin Object Detector (MMOD), which has a simple training process; though also more complex than the former two detectors.
+Another detector with Convolutional Neural Network (CNN) features is called the Maximum-Margin Object Detector (MMOD), which has a simple training process; though also more complex than the initial two detectors mentioned.
 % HOG is better
-The relative balance between the expected accuracy and complexity of a HOG detector with respect to the Haar cascade and Deep Learning options makes it preferable for this dataset. Nonetheless, a comparative analysis was performed by recording the accuracy and training time of each detector as a measure of performance and complexity.
+The relative balance between the expected accuracy and complexity of a HOG detector with respect to the Haar cascade and Deep Learning-based options makes it preferable for this dataset. Nonetheless, a comparative analysis was performed by recording the accuracy and training time of each detector as a measure of performance and complexity.
 
 % SVM model
 Classification of the binary tasks was performed using the landmark features to train models with supervised learning algorithms, namely Support-Vector Machines (SVM), which are capable of linearly separating classes in a high-dimensional space through the implementation of different kernel functions. 
@@ -122,7 +122,7 @@ The hyperplane which isolates one class from another can be refined via gradient
 \end{equation}
 
 % MLP model
-Higher-complexity models based on artificial neural networks that are capable of providing higher accuracies were also implemented using the features extracted. A Multi-Layer Perceptron (MLP) model, which carries out the training using Backpropagation, an efficient method that computes the partial derivates in gradient descent, was therefore selected for the binary tasks. The derivatives are calculated from each layer's error term, $\delta_i^l$, which is computed using Equation \ref{eq: backprop}, for $a^{(l)}$ representing the activation vector of layer $l$, resulting in the output $z^{(l)} = \theta^{(l)} a^{(l)}$ for that layer.
+Higher-complexity models based on artificial neural networks that are capable of providing greater accuracies were also implemented using the features extracted. A Multi-Layer Perceptron (MLP) model, which carries out the training using Backpropagation, an efficient method that computes the partial derivates in gradient descent, was therefore selected for the binary tasks. The derivatives are calculated from each layer's error term, $\delta_i^l$, which is computed using Equation \ref{eq: backprop}, for $a^{(l)}$ representing the activation vector of layer $l$, resulting in the output $z^{(l)} = \theta^{(l)} a^{(l)}$ for that layer.
 % TODO: Hyperparameter selection
 
 \begin{equation}
@@ -144,7 +144,7 @@ The LeNet architecture is a small yet powerful tool for image classification usi
 
 % Expected performance - overfitting
 Increasing the number of layers in a neural network is often believed to provide a better model, given the higher complexity. However, a model can be easily overfit to the training set if the parameters follow the data too closely.
-In order to obtain a more generalised model of the data, cross-validation was selected to perform out-of-sample testing on the dataset.
+In order to obtain a more generalised model of the data, 10-fold cross-validation was selected to perform out-of-sample testing on the dataset.
 % TODO: Explain cross-validation
 
 % ========================= Implementation ======================== %
@@ -185,7 +185,7 @@ In a similar manner, variations in the number of hidden layers, regularisation p
 % Include \textit{accuracy prediction scores on a separate test dataset, provided by the module organisers, but not used during training and validation}.\\
 
 % Face detection
-As previously explained, the HOG face detector is expected to provide an accuracy higher than that of the Haar Cascade and lower than that of Deep Learning methods. To observe the trade-offs between the performance and complexity of these models, a comparison of the four was carried out with the same 4,000 training data and 1,000 test data for all detectors. Table \ref{tab: face} lays out a comparative view of each method based on the overall accuracy, the true positive rate (TPR), true negative rate (TNR), false positive rate (FPR), false negative rate (FNR), and the time taken in minutes to train and carry out the predictions.
+As previously explained, the HOG face detector is expected to provide an accuracy higher than that of the Haar Cascade and lower than that of Deep Learning-based methods. To observe the trade-offs between the performance and complexity of these models, a comparison of the four was carried out with the same 4,000 training data and 1,000 test data for all detectors. Table \ref{tab: face} lays out a comparative view of each method based on the overall accuracy and the statistical features obtained from the confusion matrix, namely the true positive rate (TPR), true negative rate (TNR), false positive rate (FPR), false negative rate (FNR), and the time taken in minutes to train and carry out the predictions.
 
 \begin{table}[htp]
 \caption{Comparative measures of face detector scores}
@@ -202,6 +202,8 @@ MMOD (CNN) & 0.98 & 0.98 & 1.00 & 0.00 & 0.18 & 10.85\\ \hline
 \end{center}
 \label{tab: face}
 \end{table}%
+
+\break
 
 % Classification: binary
 The performance of the binary model classifiers were analysed and compared via the calculation of the model accuracy, recall (true positive rate), specificity (true negative rate), and precision based on its respective confusion matrix. 
@@ -249,6 +251,8 @@ CNN with LeNet architecture & 0.81 & 7.85\\ \hline
 \label{tab: mult}
 \end{table}%
 
+\break
+
 % CNN test/val plot
 As shown in the plot of the training and validation accuracies of the LeNet model throughout the backpropagation process in Figure \ref{fig: CNN}, the model achieved a maximum score of 0.81 after 25 epochs. This is considerably higher than the achieved accuracies of the SVM and MLP model classifiers.
 
@@ -258,8 +262,6 @@ As shown in the plot of the training and validation accuracies of the LeNet mode
     \caption{LeNet training and validation accuracy variation}
     \label{fig: CNN}
 \end{figure}
-
-\break
 
 % ========================== Conclusion ========================== %
 \section{Conclusion} \label{s-concl}
