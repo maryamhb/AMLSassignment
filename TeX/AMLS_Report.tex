@@ -29,6 +29,12 @@ Assignment tasks:
 \usepackage{color}
 \usepackage{listings}% code
 %\usepackage{refcheck}
+\usepackage[colorlinks = true,
+            linkcolor = black,
+            urlcolor  = blue,
+            citecolor = black,
+            anchorcolor = blue]{hyperref}
+
 \lstset{escapeinside={<@}{@>}}
 
 % ============================= Title ============================= %
@@ -45,7 +51,9 @@ Assignment tasks:
 
 % ============================ Abstract =========================== %
 \begin{center} \large \textbf{Abstract} \end{center}
-\textit{Brief overview of the methodology/results presented.}\\
+% \textit{Brief overview of the methodology/results presented.}\\
+
+Machine learning algorithms have been implemented for the detection and classification of human faces with binary and multiclass attributes using the Python programming language with several image manipulation and machine learning libraries. A comparative analysis of the performance of the different techniques for face detection and classification provided a higher obtainable accuracy from neural network architectures, particularly the single-shot-multibox detector for accurate face detection, the multi-layer perceptron model for binary classification tasks, with accuracies above 0.8, and the LeNet convolutional neural network architecture for multiclass classification, providing an accuracy of 0.81 on the hair colour classification task. The code and all results can be accessed via  \href{https://drive.google.com/file/d/1WXVxgsFRLl0BnZnKn3MUFrzJA3oxCLS6/view?usp=sharing}{Google Drive} or directly from the  \href{https://github.com/maryamhb/AMLSassignment}{GitHub repository}.
 
 % ========================== Introduction ========================== %
 \section{Introduction} \label{s-intro}
@@ -53,31 +61,28 @@ Assignment tasks:
 % The problem statement.\\
 
 % Why face recognition, why classification? (applications, need, PROBLEM!)
-The perception of visual information is a key element of human communication, particularly those from the face. The features and characteristics of an individual's face can provide information of their identity, emotion, and intent, with potential applications in access and security, law enforcement, marketing, and banking. Researchers in the fields of computer vision have been developing technological breakthroughs %?
+The perception of visual information is a key element of human communication, particularly those from the face. The features and characteristics of an individual's face can provide information about their identity, emotion, and intent, with potential applications in access and security, law enforcement, marketing, and banking. Researchers in the fields of computer vision have been developing technological breakthroughs %?
 in the implementation of face recognition using machine learning tools and techniques over the past decades.
 % Problem
-The image variations of real-world scenarios such as illumination, pose, expressions, and occlusions 
-have required more complex methods in need of preprocessing techniques to prepare images for training and classification. 
-% ^ FIX THIS!!
+The variations in real-world images from illumination, pose, expressions, and occlusions have required more complex learning tools to provide adequate predictions for a variety of images. A suitable balance between a model's accuracy and complexity is often required to meet the computational power limitations and performance requirements of a system.
 
 % Assignment + dataset description:
 % summarising data (content, size, format, etc.) and describing any \textit{data preprocessing} applied.\\
-This assignment aims to train machine learning models and perform binary and multiclass classification on a large dataset of 5000 Portable Network Graphic (PNG) image files consisting of pre-processed subsets from the \textbf{CelebFaces Attributes Dataset (CelebA)}, a celebrity image dataset  % CITE!
-%(S. Yang, P. Luo, C. C. Loy, and X. Tang, "From facial parts responses to face detection: A Deep Learning Approach", in IEEE International Conference on Computer Vision (ICCV), 2015
-, and the \textbf{Cartoon Set}, an image dataset of random cartoons/avatarts % CITE!
-%(source: https://google.github.io/cartoonset/)
-, as well as a number of noisy images (mainly of natural backgrounds) to be detected and removed from the training data, which generally constitues 80\% of the entire dataset.
-All images are labelled with hair colour, whether the subject is wearing glasses, is smiliing, and is classified as human.
 
-In order to train a suitable model for the required classification tasks, several preprocessing methods were taken into consideration to provide appropriate features for the process; for instance, facial landmarks were extracted upon face detection to train models using supervised learning algorithms such as Support Vector Machines (SVM) or  Multi-Layer Perceptor (MLP) models based on the extracted facial landmarks.
-% ^ ref to additional material for picture of landmarks and more explanation on HOGm Haar-cascade, etc.
-A comparative analysis of the performance of each method with respect to the labaled noisy images %(where all labels are defined as -1) 
-facilitated the selection of the most appropriate feature extraction method for the given dataset.
+This assignment aims to train machine learning models and perform binary and multiclass classification on a large dataset of 5000 Portable Network Graphic (PNG) image files consisting of pre-processed subsets from the "CelebFaces Attributes Dataset (CelebA)", a celebrity image dataset \cite{Yang2015} , and the "Cartoon Set", an image dataset of random cartoons/avatars \cite{Cole}, as well as a number of noisy images (mainly of natural backgrounds) to be detected and removed from the training data, containing 80\% of the entire dataset.
+All images include five labels; a multiclass hair colour label, and four binary labels classifying human/non-human subjects, whether the subject is young, wearing glasses, and smiling.
 
-Prior to feature extraction, various preprocessing techniques were carried out on the images to improve both the performance and the processing power during the later stages of the extraction, training and classification procedures. 
-% ^ pre-pre-processing? or data preparation _for_ preprocessing?
-Some of the techniques include colour space transformation, capable of significantly reducing processing complexity, gamma correction (power-law equalisation), a non-linear function used to normalise illumination by raising the input value to the power $\gamma$, and mean normalisation.%, etc.
-% ^ Elaborate + Equations
+In order to train a suitable model for the required classification tasks, several preprocessing methods were taken into consideration to provide appropriate features for the process; for instance, facial landmarks were extracted upon face detection to train models using supervised learning algorithms such as Support Vector Machines (SVM) or  Multi-Layer Perceptron (MLP) models based on the extracted facial landmarks.
+A comparative analysis of the performance of each method with respect to the labelled noisy images facilitated the selection of the most appropriate feature extraction method for the given dataset.
+
+Prior to the extraction of features, various preprocessing techniques were carried out on the images to improve both the performance and processing power during the later stages of the extraction, training and classification procedures. 
+Examples of such techniques include colour space transformation, capable of significantly reducing processing complexity, gamma correction (power-law equalisation), a non-linear function used to normalise illumination by raising the input value to the power $\gamma$, as shown in Equation \ref{eq: gamma}, and mean normalisation.
+
+\begin{equation}
+V_{out} = AV_{in}^{\gamma} \hspace{0.2cm} \text{, where  A = 1 in the common case}
+\label{eq: gamma}
+\end{equation}
+
 
 The original dataset was otherwise rescaled and augmented to avoid overfitting for alternative models more specifically used for visual recognition tasks, such as Convolutional Neural Networks (CNN), where the noisy images of the training and validation data are removed using the results of the optimum face detector method with the maximum accuracy. % Duh
 
@@ -103,7 +108,7 @@ Several algorithms have been developed to achieve this purpose, namely the Haar 
 One such Deep Learning-based face detector based on Deep Neural Networks (DNN) is known as the Single-Shot-Multibox Detector (SSD), which uses the ResNet-10 architecture as a backbone. This method is ideal for a dataset with various orientations and considerable occlusion in the images; however, the complexity of the model requires a longer amount of time to carry out the detection.
 Another detector with Convolutional Neural Network (CNN) features is called the Maximum-Margin Object Detector (MMOD), which has a simple training process; though also more complex than the former two detectors.
 % HOG is better
-The relative balance between the expected accuracy and complexity of a HOG detector with respect to the Haar casccade and Deep Learning options makes it preferable for this dataset. Nonetheless, a comparative analysis was perfomed by recording the accuracy and training time of each detector as a measure of performance and complexity.
+The relative balance between the expected accuracy and complexity of a HOG detector with respect to the Haar cascade and Deep Learning options makes it preferable for this dataset. Nonetheless, a comparative analysis was performed by recording the accuracy and training time of each detector as a measure of performance and complexity.
 
 % SVM model
 Classification of the binary tasks was performed using the landmark features to train models with supervised learning algorithms, namely Support-Vector Machines (SVM), which are capable of linearly separating classes in a high-dimensional space through the implementation of different kernel functions. 
@@ -126,7 +131,7 @@ Higher-complexity models based on artificial neural networks that are capable of
 \end{equation}
 
 % CNN model
-Despite the minimised processing requirement when the landmark features are used, they pose limitations to classification tasks less reliant on the key component locations, and requiring important information ommited from the images such as colour. Thus, for the final task of detecting hair colour, a more commonly-used classifier for image processing with multilayer neural networks called Convolutional Neural Networks (CNN) was implemented on a LeNet architecture. The popularity of CNNs in image classification is primarily due to the 3D volumes of neurons, resuling in connectivities of small regions between layers (known as the receptive field), which can result in a lower complexity than the traditional neural networks, while taking advantage of 3-dimensional images. 
+Despite the minimised processing requirement when the landmark features are used, they pose limitations to classification tasks less reliant on the key component locations, and requiring important information omitted from the images such as colour. Thus, for the final task of detecting hair colour, a more commonly-used classifier for image processing with multilayer neural networks called Convolutional Neural Networks (CNN) was implemented on a LeNet architecture. The popularity of CNNs in image classification is primarily due to the 3D volumes of neurons, resulting in connectivities of small regions between layers (known as the receptive field), which can result in a lower complexity than the traditional neural networks, while taking advantage of 3-dimensional images. 
 % LeNet architectures
 The LeNet architecture is a small yet powerful tool for image classification using CNN. Primarily used for Optical Character Recognition (OCR), LeNet implements a 7-level convolutional network composed of convolutional layers, (ReLU) activation and pooling layers, as illustrated in Figure \ref{fig: LeNet}.
 
@@ -148,8 +153,8 @@ In order to obtain a more generalised model of the data, cross-validation was se
 % Provide name and use of \textit{external libraries} and explain how \textit{model parameters} were selected.\\
 
 % Preprocessing
-The primary image manipulation and pre-processing tasks were performed with the aid of the Open Source Computer Vision (OpenCV) and dlib librarires, which are widely used in image processing. The implemented functions range from colour space transformation to face detection and landmark prediction for the binary classification tasks. 
-Mathematical manpulation and analysis as well as file handling were mainly carried out using the NumPy and Pandas software libraries.
+The primary image manipulation and pre-processing tasks were performed with the aid of the Open Source Computer Vision (OpenCV) and dlib libraries, which are widely used in image processing. The implemented functions range from colour space transformation to face detection and landmark prediction for the binary classification tasks. 
+Mathematical manipulation and analysis as well as file handling were mainly carried out using the NumPy and Pandas software libraries.
 
 % Machine learning
 As for the implementation of machine learning algorithms, such as SVM, MLP, and the corresponding tools to carry out cross-validation and obtain the confusion matrix, the Scikit-learn library was employed to mainly carry out binary classification tasks. 
@@ -167,7 +172,7 @@ Finally, the Matplotlib plotting library was included to provide visual outputs 
 
 % Model parameters
 Each classification task was performed using various functions and parameters. For instance, the SVM was implemented with different Kernels to find the optimum performance of binary classification, such as linear, polynomial (\code{poly}), radial basis function (\code{rbf}), and sigmoid. A sweep of the penalty parameter $C$ was carried out to observe the effects of parameter variations.
-In a similar manner, variations in the number of hidden layers, regularisation parameter alpha, and the solver were applied to achieve the optimum response. The log-loss function of the MLP is optimised using the lbfgs or schotastic gradient descent (\code{sgd}).
+In a similar manner, variations in the number of hidden layers, regularisation parameter alpha, and the solver were applied to achieve the optimum response. The log-loss function of the MLP is optimised using the lbfgs or stochastic gradient descent (\code{sgd}).
 
 % Thorough discussion on the training convergence and stopping criterion (use learning curves graphs).\\
 
@@ -203,7 +208,7 @@ The performance of the binary model classifiers were analysed and compared via t
 % Results table
 As shown in table \ref{tab: bin}, the MLP classifier with lbfgs solver was often found to be the optimum solution for the binary tasks, as the number of hidden layers were maintained low to avoid overfitting to the training data. 
 % Cross validation
-Carying out rotation estimation on the data showed an instance of overfitting for the MLP classifier, as the overall score obtained from a 10-fold cross-validation on task 2 was measured to be 0.79, whereas the SVM classifier with the RBF kernel provided an accuracy as high as 0.84.
+Carrying out rotation estimation on the data showed an instance of overfitting for the MLP classifier, as the overall score obtained from a 10-fold cross-validation on task 2 was measured to be 0.79, whereas the SVM classifier with the RBF kernel provided an accuracy as high as 0.84.
 
 \begin{table}[htp]
 \caption{Performance measures of binary classifiers}
@@ -222,7 +227,7 @@ Task & Method & Accuracy & Recall & Specificity & Precision\\ \hline
 \end{table}%
 
 % Classification: multiclass
-The SVM and MLP classifiers were initially trained on the raw image dataset (with lowered image sizes converted to arrays) to carry out multiclass classification on hair colour for the fifth and final task. The linearised formated of the feature set resulted in a higher complexity with inadequate test scores. Hence, a CNN with the LeNet architecture was implemented, providing a more acceptable test accuracy, as illustrated in Table \ref{tab: mult}.
+The SVM and MLP classifiers were initially trained on the raw image dataset (with lowered image sizes converted to arrays) to carry out multiclass classification on hair colour for the fifth and final task. The linearised formatted of the feature set resulted in a higher complexity with inadequate test scores. Hence, a CNN with the LeNet architecture was implemented, providing a more acceptable test accuracy, as illustrated in Table \ref{tab: mult}.
 % CNN data split x2
 The training data of this task was divided in two stages for this task in order to provide sufficient validation data for backpropagation. 
 
@@ -254,6 +259,8 @@ As shown in the plot of the training and validation accuracies of the LeNet mode
     \label{fig: CNN}
 \end{figure}
 
+\break
+
 % ========================== Conclusion ========================== %
 \section{Conclusion} \label{s-concl}
 
@@ -283,7 +290,7 @@ and ResNet with 152 layers and an error as low as 3.57\% on the ImageNet dataset
     \label{fig: GoogLeNet}
 \end{figure}
 
-Improved variants of the Inception reduces the effects of auxiliary classifiers via the implementation of batch normalisation in order to provide regularised training \cite{Szegedy2015a}.
+Improved variants of the Inception reduces the effects of auxiliary classifiers via the implementation of batch normalisation in order to provide regularised training \cite{Szegedy2015a}. The factorised convolutions and aggressive regularisation of these variants result in more efficient computation in the network.
 
 % ========================== References ========================== %
 
