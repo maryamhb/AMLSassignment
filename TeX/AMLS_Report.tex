@@ -99,7 +99,11 @@ Several algorithms have been developed to achieve this purpose, namely the Haar 
     \label{fig: landmarks}
 \end{figure}
 
-The relative balance between the expected accuracy and complexity of a HoG detector with respect to the Haar casccade and Deep Learning options makes it preferable for this dataset. Nonetheless, a comparative analysis was perfomed by recording the accuracy and training time of each detector as a measure of performance and complexity.
+% Deep learning-based
+One such Deep Learning-based face detector based on Deep Neural Networks (DNN) is known as the Single-Shot-Multibox Detector (SSD), which uses the ResNet-10 architecture as a backbone. This method is ideal for a dataset with various orientations and considerable occlusion in the images; however, the complexity of the model requires a longer amount of time to carry out the detection.
+Another detector with Convolutional Neural Network (CNN) features is called the Maximum-Margin Object Detector (MMOD), which has a simple training process; though also more complex than the former two detectors.
+% HOG is better
+The relative balance between the expected accuracy and complexity of a HOG detector with respect to the Haar casccade and Deep Learning options makes it preferable for this dataset. Nonetheless, a comparative analysis was perfomed by recording the accuracy and training time of each detector as a measure of performance and complexity.
 
 % SVM model
 Classification of the binary tasks was performed using the landmark features to train models with supervised learning algorithms, namely Support-Vector Machines (SVM), which are capable of linearly separating classes in a high-dimensional space through the implementation of different kernel functions. 
@@ -144,41 +148,112 @@ In order to obtain a more generalised model of the data, cross-validation was se
 % Provide name and use of \textit{external libraries} and explain how \textit{model parameters} were selected.\\
 
 % Preprocessing
-The primary image manipulation and pre-processing tasks were performed with the aid of the Open Source Computer Vision (OpenCV) and dlib librarires, which are widely used in image processing. The implemented functions range from colour space transformation to face detection and landmark prediction for the binary classification tasks. Mathematical manpulation and analysis as well as file handling were mainly carried out using the NumPy and Pandas software libraries.
+The primary image manipulation and pre-processing tasks were performed with the aid of the Open Source Computer Vision (OpenCV) and dlib librarires, which are widely used in image processing. The implemented functions range from colour space transformation to face detection and landmark prediction for the binary classification tasks. 
+Mathematical manpulation and analysis as well as file handling were mainly carried out using the NumPy and Pandas software libraries.
+
 % Machine learning
 As for the implementation of machine learning algorithms, such as SVM, MLP, and the corresponding tools to carry out cross-validation and obtain the confusion matrix, the Scikit-learn library was employed to mainly carry out binary classification tasks. 
 Likewise, Keras was implemented for running neural network algorithms, specifically the Convolutional Neural Networks, enabling fast experimentation on a large dataset.
 % Plots and graphs
-Finally, the Matplotlib plotting library was included to provide visual outputs on the data, such as learning curves, which provides a verification of a model's performance.
+Finally, the Matplotlib plotting library was included to provide visual outputs on the data, such as learning curves, which outline the validation and test accuracies over a range of training samples, such as that shown in Figure \ref{fig: T1-LC}.
+% TODO: Explain the curve..?
+
+\begin{figure} [h] % Learning curve of Task 1: emotion (SVM)
+  \centering
+    \includegraphics[width=0.5\textwidth]{graphs/T1_SVM_RBF} 
+    \caption{Learning curve of emotion recognition}
+    \label{fig: T1-LC}
+\end{figure}
 
 % Model parameters
-Each classifier was performed using various functions and parameters. For instance, the SVM was implemented with different Kernels to find the optimum performance of binary classification, such as linear, polynomial (\code{poly}), radial basis function (\code{rbf}), and sigmoid. A sweep of the penalty parameter $C$ was carried out to observe the effects of parameter variations.
+Each classification task was performed using various functions and parameters. For instance, the SVM was implemented with different Kernels to find the optimum performance of binary classification, such as linear, polynomial (\code{poly}), radial basis function (\code{rbf}), and sigmoid. A sweep of the penalty parameter $C$ was carried out to observe the effects of parameter variations.
 In a similar manner, variations in the number of hidden layers, regularisation parameter alpha, and the solver were applied to achieve the optimum response. The log-loss function of the MLP is optimised using the lbfgs or schotastic gradient descent (\code{sgd}).
 
 % Thorough discussion on the training convergence and stopping criterion (use learning curves graphs).\\
 
+% TODO!!
 
 % ======================= Experimental results ====================== %
 \section{Experimental result} \label{s-exp-res}
 
 % Describe and discuss results, compare to other approaches in literature or variations of ML solutions.\\
-
-% SVM -> various Kernels
-
-% MLP -> solver perf
-
-
 % Include \textit{accuracy prediction scores on a separate test dataset, provided by the module organisers, but not used during training and validation}.\\
 
-% Accuracy comparison tables
+% Face detection
+As previously explained, the HOG face detector is expected to provide an accuracy higher than that of the Haar Cascade and lower than that of Deep Learning methods. To observe the trade-offs between the performance and complexity of these models, a comparison of the four was carried out with the same 4,000 training data and 1,000 test data for all detectors. Table \ref{tab: face} lays out a comparative view of each method based on the overall accuracy, the true positive rate (TPR), true negative rate (TNR), false positive rate (FPR), false negative rate (FNR), and the time taken in minutes to train and carry out the predictions.
 
-% Cross validation data
+\begin{table}[htp]
+\caption{Comparative measures of face detector scores}
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+Method & Accuracy & TPR & TNR & FPR & FNR & Time\\ \hline
+Haar Cascade & 0.78 & 0.77 & 0.40 & 0.03 & 0.72 & 1.88 \\ \hline
+HOG with SVM & 0.97 & 0.97 & 1.00 & 0.00 & 0.33 & 2.79 \\ \hline
+SSD (DNN) & 0.99 & 0.98 & 1.00 & 0.00 & 0.14 & 4.55\\ \hline
+MMOD (CNN) & 0.98 & 0.98 & 1.00 & 0.00 & 0.18 & 10.85\\ \hline
+\end{tabular}
+\end{center}
+\label{tab: face}
+\end{table}%
 
+% Classification: binary
+The performance of the binary model classifiers were analysed and compared via the calculation of the model accuracy, recall (true positive rate), specificity (true negative rate), and precision based on its respective confusion matrix. 
+% Results table
+As shown in table \ref{tab: bin}, the MLP classifier with lbfgs solver was often found to be the optimum solution for the binary tasks, as the number of hidden layers were maintained low to avoid overfitting to the training data. 
+% Cross validation
+Carying out rotation estimation on the data showed an instance of overfitting for the MLP classifier, as the overall score obtained from a 10-fold cross-validation on task 2 was measured to be 0.79, whereas the SVM classifier with the RBF kernel provided an accuracy as high as 0.84.
+
+\begin{table}[htp]
+\caption{Performance measures of binary classifiers}
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Task & Method & Accuracy & Recall & Specificity & Precision\\ \hline
+1 & MLP (lbfgs) & 0.93 & 0.95 & 0.86 & 0.96\\ \hline
+2 & MLP (lbfgs) & 0.79 & 0.81 & 0.60 & 0.96\\ \hline
+3 & MLP (lbfgs) & 0.86 & 0.81 & 0.88 & 0.66\\ \hline
+4& SVM (poly) & 0.98 & 0.98 & 0.97 & 0.96\\ \hline
+\end{tabular}
+\end{center}
+\label{tab: bin}
+\end{table}%
+
+% Classification: multiclass
+The SVM and MLP classifiers were initially trained on the raw image dataset (with lowered image sizes converted to arrays) to carry out multiclass classification on hair colour for the fifth and final task. The linearised formated of the feature set resulted in a higher complexity with inadequate test scores. Hence, a CNN with the LeNet architecture was implemented, providing a more acceptable test accuracy, as illustrated in Table \ref{tab: mult}.
 % CNN data split x2
+The training data of this task was divided in two stages for this task in order to provide sufficient validation data for backpropagation. 
 
 % task 5 accuracy table
+\begin{table}[htp]
+\caption{Performance measures of multiclass classifiers}
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|c|c|}
+\hline
+\hspace{1cm} Method & Accuracy & Time\\ \hline
+SVM with Sigmoid Kernel & 0.14 & 1.70\\ \hline
+SVM with RBF Kernel & 0.30 & 2.37\\ \hline
+MLP with SGD solver & 0.49 & 0.38\\ \hline
+MLP with LBFGS solver & 0.60 & 0.20\\ \hline
+CNN with LeNet architecture & 0.81 & 7.85\\ \hline
+\end{tabular}
+\end{center}
+\label{tab: mult}
+\end{table}%
+
 
 % CNN test/val plot
+Figure \ref{fig: CNN} demonstrates the training and validation accuracies of the LeNet model throughout the backpropagation process. 
+
+\begin{figure} [h] % LeNet training/test accuracy
+  \centering
+    \includegraphics[width=0.5\textwidth]{graphs/T5_CNN_Keras} 
+    \caption{LeNet training and validation accuracy variation}
+    \label{fig: CNN}
+\end{figure}
 
 % ========================== Conclusion ========================== %
 \section{Conclusion} \label{s-concl}
