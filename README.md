@@ -34,7 +34,7 @@ The libraries NumPy, Pandas, Time, OS, and MatplotLib are also required for data
 * testing.py runs the detection and classification functions and stores the data to file
 * models/lenet.py implements the LeNet architecture for the multiclass classification task
 
-### folders
+### Folders in Python/code
 
 - out/ includes all the results from the tests (see README.md in out/)
 - models/ contains face detection models and the LeNet architecture setup file
