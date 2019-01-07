@@ -33,6 +33,7 @@ Assignment tasks:
 
 % ============================= Title ============================= %
 \begin{document}
+\def\code#1{\texttt{#1}}
 
 \title{Applied Machine Learning\\
  Systems ELEC0132 Assignment}
@@ -143,21 +144,41 @@ In order to obtain a more generalised model of the data, cross-validation was se
 % Provide name and use of \textit{external libraries} and explain how \textit{model parameters} were selected.\\
 
 % Preprocessing
-Two of the main Python libraries 
+The primary image manipulation and pre-processing tasks were performed with the aid of the Open Source Computer Vision (OpenCV) and dlib librarires, which are widely used in image processing. The implemented functions range from colour space transformation to face detection and landmark prediction for the binary classification tasks. Mathematical manpulation and analysis as well as file handling were mainly carried out using the NumPy and Pandas software libraries.
+% Machine learning
+As for the implementation of machine learning algorithms, such as SVM, MLP, and the corresponding tools to carry out cross-validation and obtain the confusion matrix, the Scikit-learn library was employed to mainly carry out binary classification tasks. 
+Likewise, Keras was implemented for running neural network algorithms, specifically the Convolutional Neural Networks, enabling fast experimentation on a large dataset.
+% Plots and graphs
+Finally, the Matplotlib plotting library was included to provide visual outputs on the data, such as learning curves, which provides a verification of a model's performance.
 
-% scikit-learn -> svm, neural networks, etc.
-The 
+% Model parameters
+Each classifier was performed using various functions and parameters. For instance, the SVM was implemented with different Kernels to find the optimum performance of binary classification, such as linear, polynomial (\code{poly}), radial basis function (\code{rbf}), and sigmoid. A sweep of the penalty parameter $C$ was carried out to observe the effects of parameter variations.
+In a similar manner, variations in the number of hidden layers, regularisation parameter alpha, and the solver were applied to achieve the optimum response. The log-loss function of the MLP is optimised using the lbfgs or schotastic gradient descent (\code{sgd}).
 
-% cross-validation methods on various parameter values
+% Thorough discussion on the training convergence and stopping criterion (use learning curves graphs).\\
 
-Thorough discussion on the training convergence and stopping criterion (use learning curves graphs).\\
 
 % ======================= Experimental results ====================== %
 \section{Experimental result} \label{s-exp-res}
 
-Describe and discuss results, compare to other approaches in literature or variations of ML solutions.\\
+% Describe and discuss results, compare to other approaches in literature or variations of ML solutions.\\
 
-Include \textit{accuracy prediction scores on a separate test dataset, provided by the module organisers, but not used during training and validation}.\\
+% SVM -> various Kernels
+
+% MLP -> solver perf
+
+
+% Include \textit{accuracy prediction scores on a separate test dataset, provided by the module organisers, but not used during training and validation}.\\
+
+% Accuracy comparison tables
+
+% Cross validation data
+
+% CNN data split x2
+
+% task 5 accuracy table
+
+% CNN test/val plot
 
 % ========================== Conclusion ========================== %
 \section{Conclusion} \label{s-concl}
