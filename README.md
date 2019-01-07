@@ -22,19 +22,39 @@ _[Dataset folder](https://drive.google.com/drive/folders/1NgP2jQakFHibIhpevDLsho
 
 ### Required libraries
 
-To run the classification models, the following libraries are required: Scikit-learn, Keras, dlib, OpenCV.
+* Classification models: Scikit-learn, Keras, dlib, and OpenCV.
 
-The libraries NumPy, Pandas, Time, OS, and MatplotLib are also required for data processing, file handling, and data representation.
+* Data processing, storage, and representation: NumPy, Pandas, Time, OS, and MatplotLib.
 
 ### Python files
 
-* landmarks.py implements funtions on Haar Cascode, HOG, and Deep Learning-based face detectors for obtaining image landmarks from detected faces
-* classification.py includes the required functions for SVM and MLP implementation, as well as cross-validation testing
-* utils.py provides the utility functions for handling files and data used in landmarks.py and classification.py
-* testing.py runs the detection and classification functions and stores the data to file
-* models/lenet.py implements the LeNet architecture for the multiclass classification task
+* landmarks.py 
 
-### Folders in Python/code
+Implements funtions on Haar Cascode, HOG, and Deep Learning-based face detectors for obtaining image landmarks from detected faces.
 
-- out/ includes all the results from the tests (see README.md in out/)
-- models/ contains face detection models and the LeNet architecture setup file
+* classification.py 
+
+Includes the required functions for SVM and MLP implementation, as well as cross-validation testing.
+
+* utils.py 
+
+Provides the utility functions for handling files and data used in landmarks.py and classification.py.
+
+* testing.py 
+
+Calls the detection and classification functions and stores the results to csv. This file includes one function for binary tasks 1-4 and two for multiclass task 5. The landmarks previously stored in out/ are used by default to save time. To re-run the face detector, uncomment function update_features()
+
+* models/lenet.py 
+
+Implements the LeNet architecture for the multiclass classification task
+
+### Folders in Python
+
+- code/out/ 
+
+Includes all the results from the tests (see out/README.md)
+Face detector features are stored in Face_detection/ for convenience 
+
+- code/models/
+
+Contains face detection models and the LeNet architecture setup file
