@@ -244,9 +244,8 @@ CNN with LeNet architecture & 0.81 & 7.85\\ \hline
 \label{tab: mult}
 \end{table}%
 
-
 % CNN test/val plot
-Figure \ref{fig: CNN} demonstrates the training and validation accuracies of the LeNet model throughout the backpropagation process. 
+As shown in the plot of the training and validation accuracies of the LeNet model throughout the backpropagation process in Figure \ref{fig: CNN}, the model achieved a maximum score of 0.81 after 25 epochs. This is considerably higher than the achieved accuracies of the SVM and MLP model classifiers.
 
 \begin{figure} [h] % LeNet training/test accuracy
   \centering
@@ -258,12 +257,33 @@ Figure \ref{fig: CNN} demonstrates the training and validation accuracies of the
 % ========================== Conclusion ========================== %
 \section{Conclusion} \label{s-concl}
 
-Summaries all findings and suggest direction for future improvement.\\
+% Summaries all findings and suggest direction for future improvement.\\
+
+% General overview
+A comparative analysis of several methods of face detection and image classification was carried out on a labelled dataset of 5,000 images using binary and multiclass classifiers with support vector machines and neural networks via OpenCV, dlib, Keras, and Scikit-learn Python libraries for image processing and machine learning. An analysis of the performance and complexity of the models was carried out using cross-validation for a non-biased response and confusion matrices to obtain the statistics of true predictions. 
+
+% binary analysis
+The multi-layer perceptron neural network was generally found to provide more accurate binary classification models, except for particular test data on glasses detection (task 3), where the model was overfit. It can therefore be concluded that the higher complexity of neural networks does not necessarily ensure higher prediction scores.
+
+% multiclass analysis
+Implementation of the LeNet CNN architecture provided considerably more accurate predictions for the multiclass classification task of hair colour classification. However, higher accuracies can be obtained via the implementation of more advanced convolutional neural networks such as AlexNet, a larger model which includes max pooling, ReLU nonlinearity, and dropout regularisation.
 
 % ========================= Related work ========================== %
 \section{Related Work} \label{s-rel-work}
 
-Summarise latest reserach on the topic, discussing merits/disadvantages of diff approaches.\\
+% Summarise latest reserach on the topic, discussing merits/disadvantages of diff approaches.\\
+
+A number of CNN frameworks have been implemented for image classification since the introduction of the LeNet architecture in 1998. Some of the more recent frameworks include GoogLeNet with 19 layers, capable of achieving 6.67\% error with the Inception Module,
+and ResNet with 152 layers and an error as low as 3.57\% on the ImageNet dataset \cite{He2006}. The Inception Module in both architectures implements parallel paths of various receptive field dimensions and operations in order to capture sparse correlation patterns, as illustrated in Figure \ref{fig: GoogLeNet}.
+
+\begin{figure} [h] % GoogLeNet Inception Module
+  \centering
+    \includegraphics[width=0.5\textwidth]{graphs/GoogLeNet} 
+    \caption{Implementation of the Inception Module \cite{Szegedy2015}}
+    \label{fig: GoogLeNet}
+\end{figure}
+
+Improved variants of the Inception reduces the effects of auxiliary classifiers via the implementation of batch normalisation in order to provide regularised training \cite{Szegedy2015a}.
 
 % ========================== References ========================== %
 
